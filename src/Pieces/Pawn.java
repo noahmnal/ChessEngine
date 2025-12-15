@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Pawn extends Piece {
+  public boolean enPassantPawn = false;
 
   public Pawn(int x, int y, String color, Board board) {
     super(x, y, color, board);
@@ -24,13 +25,22 @@ public class Pawn extends Piece {
     );
   }
 
+
   @Override
   public ArrayList<Tile> getLegalTiles() {
+    ArrayList<Tile> legalTiles;
+
     if (colour.equals("white")) {
-      return filterLegalTiles(func(2, 1));
+      legalTiles = findLegalMoves(2, 1);
+    } else {
+      legalTiles = findLegalMoves(7, -1);
     }
-    else {return filterLegalTiles(func(7, -1));}
-}
+
+    addEnPassant(legalTiles);
+
+    return filterLegalTiles(legalTiles);
+  }
+
 
   @Override
   public ArrayList<Tile> getAttackTiles() {
@@ -40,7 +50,7 @@ public class Pawn extends Piece {
     return attackingTiles;
   }
 
-  private ArrayList<Tile> func(int rowCheck, int sign) {
+  private ArrayList<Tile> findLegalMoves(int rowCheck, int sign) {
     ArrayList<Tile> legalTiles = new ArrayList<>();
     Tile newTile;
     if (y == rowCheck) {
@@ -66,6 +76,21 @@ public class Pawn extends Piece {
       if (checkForPiecesBlocking(newTile))
         checkIfOwnColour(legalTiles, newTile);
     }
+  }
+
+  private void addEnPassant(ArrayList<Tile> legalTiles) {
+    if (board.enPassantPawn == null) return;
+    Pawn p = board.enPassantPawn;
+
+    if (p.getColour().equals(colour)) return;
+
+    if (p.getY() != this.y) return;
+
+    if (Math.abs(p.getX() - this.x) != 1) return;
+
+    int direction = colour.equals("white") ? 1 : -1;
+    legalTiles.add(new Tile(p.getX(), y + direction));
+    enPassantPawn = true;
   }
 
 }

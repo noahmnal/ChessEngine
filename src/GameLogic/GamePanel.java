@@ -5,6 +5,7 @@ import Models.GameLogic;
 import Models.Piece;
 import Models.Tile;
 import Pieces.King;
+import Pieces.Pawn;
 import Pieces.Rook;
 
 import javax.swing.*;
@@ -143,6 +144,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
             System.out.println("no castling tiles");
           }
         board.setPos(tileX, tileY, currentPieceMoving);
+        if (currentPieceMoving instanceof Pawn pawn &&
+                pawn.enPassantPawn) {
+
+          int sign = pawn.getColour().equals("white") ? 1 : -1;
+          board.deletePiece(tileX, tileY - sign);
+          pawn.enPassantPawn = false;
+        }
         turn = gameLogic.switchTurn(turn);
         board.setChecksForKings();
       }

@@ -8,6 +8,7 @@ public class Board {
   private final ArrayList<Tile> tiles;
   public boolean whiteInCheck = false;
   public boolean blackInCheck = false;
+  public Pawn enPassantPawn = null;
   public Board() {
     tiles = new ArrayList<>();
     for (int i = 1; i < 9; i++) {
@@ -61,12 +62,31 @@ public class Board {
   }
 
   public void setPos(int x, int y, Piece piece) {
+    if (piece instanceof Pawn pawn) {
+      if (Math.abs(pawn.getY() - y) == 2) {
+        enPassantPawn = pawn;
+      } else {
+        enPassantPawn = null;
+      }
+    } else {
+      enPassantPawn = null;
+    }
     removePiece(piece);
     piece.setX(x);
     piece.setY(y);
     movePieceToNewTIle(piece);
     piece.setHaveMoved(true);
   }
+
+  public void deletePiece(int x, int y) {
+    for (Tile tile : tiles) {
+      if (tile.getX() == x && tile.getY() == y) {
+        tile.setPiece(null);
+      }
+    }
+  }
+
+
 
   private void movePieceToNewTIle(Piece piece) {
     for (Tile tile : tiles) {
@@ -156,7 +176,7 @@ public class Board {
   public boolean simulateIsMoveLegal(Piece piece, Tile targetTile) {
     int oldX = piece.getX();
     int oldY = piece.getY();
-
+    Pawn savedEnPassant = enPassantPawn;
     Piece captured = null;
     for (Tile t : getTiles()) {
       if (t.equals(targetTile)) {
@@ -175,6 +195,7 @@ public class Board {
       setPos(targetTile.getX(), targetTile.getY(), captured);
     }
     setChecksForKings();
+    enPassantPawn = savedEnPassant;
 
     return !kingInCheck;
   }

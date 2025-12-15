@@ -7,8 +7,6 @@ import GameLogic.GamePanel;
 
 public class Tile {
   private final int y;
-
-
   private final int x;
   private String color;
   private Piece piece;
