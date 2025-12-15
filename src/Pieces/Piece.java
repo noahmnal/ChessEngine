@@ -1,4 +1,7 @@
-package Models;
+package Pieces;
+
+import Models.Board;
+import Models.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ public abstract class Piece {
 
   public abstract ArrayList<Tile> getLegalTiles();
   public abstract ArrayList<Tile> getAttackTiles();
+  public int value;
   protected Image blackImage;
 
 
@@ -129,7 +133,6 @@ public abstract class Piece {
 
   protected ArrayList<Tile> filterLegalTiles(ArrayList<Tile> candidateTiles) {
     ArrayList<Tile> legal = new ArrayList<>();
-
     for (Tile tile : candidateTiles) {
       if (board.simulateIsMoveLegal(this, tile)) {
         legal.add(tile);

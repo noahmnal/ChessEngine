@@ -1,0 +1,25 @@
+package GameLogic;
+
+import java.util.ArrayList;
+
+public class MovesHistory {
+  private static final ArrayList<Move> moves = new ArrayList<>();
+
+
+  public static void addMove(Move move) {
+    moves.add(move);
+    System.out.println(moves);
+  }
+
+  public static ArrayList<Move> getMoves() {
+    if (moves.isEmpty()) {
+      return null;
+    }
+    return moves;
+  }
+  public static void removeLast() {
+    if (moves.isEmpty()) {return;}
+    moves.removeLast();
+  }
+
+}

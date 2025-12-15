@@ -1,5 +1,4 @@
 import GameLogic.GamePanel;
-import GameLogic.Cpu;
 import Models.Board;
 import Models.GameLogic;
 
@@ -8,7 +7,7 @@ import javax.swing.JFrame;
 
 
 
-void main() {
+void main() throws InterruptedException {
     JFrame window = new JFrame();
     window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     window.setResizable(false);

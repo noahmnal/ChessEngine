@@ -2,7 +2,6 @@ package Pieces;
 
 import GameLogic.GamePanel;
 import Models.Board;
-import Models.Piece;
 import Models.Tile;
 
 import javax.swing.*;
@@ -17,21 +16,14 @@ public class King extends Piece {
 
   public King(int x, int y, String color,  Board board) {
     super(x,y,color, board);
+    value = 1000;
      castlingTile = new HashMap<>();
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteKing.png"))
-    ).getImage().getScaledInstance(
-            GamePanel.tileSize,
-            GamePanel.tileSize,
-            Image.SCALE_SMOOTH
-    );
+    ).getImage();
     this.blackImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/blackKing.png"))
-    ).getImage().getScaledInstance(
-            GamePanel.tileSize,
-            GamePanel.tileSize,
-            Image.SCALE_SMOOTH
-    );
+    ).getImage();
   }
   @Override
   public ArrayList<Tile> getLegalTiles() {

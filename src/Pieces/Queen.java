@@ -2,7 +2,6 @@ package Pieces;
 
 import GameLogic.GamePanel;
 import Models.Board;
-import Models.Piece;
 import Models.Tile;
 
 import javax.swing.*;
@@ -14,20 +13,13 @@ public class Queen extends Piece {
 
   public Queen(int x, int y, String color, Board board) {
     super(x, y, color, board);
+    value = 9;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteQueen.png"))
-    ).getImage().getScaledInstance(
-            GamePanel.tileSize,
-            GamePanel.tileSize,
-            Image.SCALE_SMOOTH
-    );
+    ).getImage();
     this.blackImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/BlackQueen.png"))
-    ).getImage().getScaledInstance(
-            GamePanel.tileSize,
-            GamePanel.tileSize,
-            Image.SCALE_SMOOTH
-    );
+    ).getImage();
 
   }
 

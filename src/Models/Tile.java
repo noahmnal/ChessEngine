@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.Objects;
 
 import GameLogic.GamePanel;
+import Pieces.Piece;
 
 public class Tile {
   private final int y;

@@ -1,8 +1,7 @@
 package GameLogic;
 
 import Models.Board;
-import Models.GameLogic;
-import Models.Piece;
+import Pieces.Piece;
 import Models.Tile;
 
 import java.util.ArrayList;

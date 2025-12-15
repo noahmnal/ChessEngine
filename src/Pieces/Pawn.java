@@ -1,8 +1,6 @@
 package Pieces;
 
-import GameLogic.GamePanel;
 import Models.Board;
-import Models.Piece;
 import Models.Tile;
 
 import javax.swing.*;
@@ -15,14 +13,13 @@ public class Pawn extends Piece {
 
   public Pawn(int x, int y, String color, Board board) {
     super(x, y, color, board);
+    value = 1;
     this.whiteImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/whitePawn.png"))).getImage().getScaledInstance(
-            GamePanel.tileSize, GamePanel.tileSize, Image.SCALE_SMOOTH
-    );
+            Objects.requireNonNull(getClass().getResource("/Images/whitePawn.png"))).getImage();
+
     this.blackImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/blackPawn.png"))).getImage().getScaledInstance(
-            GamePanel.tileSize, GamePanel.tileSize, Image.SCALE_SMOOTH
-    );
+            Objects.requireNonNull(getClass().getResource("/Images/blackPawn.png"))).getImage();
+
   }
 
 
@@ -79,8 +76,8 @@ public class Pawn extends Piece {
   }
 
   private void addEnPassant(ArrayList<Tile> legalTiles) {
-    if (board.enPassantPawn == null) return;
-    Pawn p = board.enPassantPawn;
+    if (board.enPassantPossible == null) return;
+    Pawn p = board.enPassantPossible;
 
     if (p.getColour().equals(colour)) return;
 
