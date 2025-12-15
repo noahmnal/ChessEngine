@@ -92,5 +92,4 @@ public class Pawn extends Piece {
     legalTiles.add(new Tile(p.getX(), y + direction));
     enPassantPawn = true;
   }
-
 }

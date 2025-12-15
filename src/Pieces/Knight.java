@@ -40,7 +40,7 @@ public class Knight extends Piece {
     ArrayList<Tile> tiles = new ArrayList<>();
     for (int i = -2; i < 3; i++) {
       for (int j = -2; j < 3; j++) {
-        if (Math.abs(i) + Math.abs(j) == 3) {
+        if (Math.abs(i) + Math.abs(j) == 3 && x+i > 0 && y+j > 0 && x+i <= 8 && y+j <= 8) {
           Tile tile = new Tile(x+i, y+j);
           if (!checkIfOwnColour(tiles, tile))
             tiles.add(tile);

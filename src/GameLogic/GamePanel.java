@@ -13,15 +13,16 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
-
-  private static final int screenLenght = 800;
+  public boolean playCpu = false;
+  private static final int screenLength = 800;
   private static final int screenHeight = 800;
 
   private final Board board;
   private final GameLogic gameLogic;
+  private Cpu cpu;
 
 
-  public static final int tileSize = screenLenght / 8;
+  public static final int tileSize = screenLength / 8;
 
   private int mouseX, mouseY;
   private Piece currentPieceMoving;
@@ -33,7 +34,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   public GamePanel(Board board, GameLogic gameLogic) {
     this.board = board;
     this.gameLogic = gameLogic;
-    this.setPreferredSize(new Dimension(screenLenght, screenHeight));
+    this.setPreferredSize(new Dimension(screenLength, screenHeight));
     this.setBackground(Color.BLACK);
     this.setDoubleBuffered(true);
     addKeyListener(this);
@@ -56,7 +57,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     for (Tile tile : board.getTiles()) {
       if (tile.getColour().equals("black")) {
         g.setColor(Color.RED);
-        g.fillRect((tile.getX() - 1) * tileSize, (tile.getY() - 1) * tileSize, screenLenght, screenHeight);
+        g.fillRect((tile.getX() - 1) * tileSize, (tile.getY() - 1) * tileSize, screenLength, screenHeight);
       } else {
         g.setColor(Color.WHITE);
         g.fillRect((tile.getX() - 1) * tileSize, (tile.getY() - 1) * tileSize, tileSize, tileSize);
@@ -90,12 +91,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
   @Override
   public void keyTyped(KeyEvent e) {
-
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
-
+    if (e.getKeyCode() == KeyEvent.VK_C) {
+      if (!playCpu)
+        initCpu();
+      playCpu = true;
+    }
+  }
+  public void initCpu() {
+    cpu = new Cpu(board, this);
   }
 
   @Override
@@ -114,7 +121,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     mouseX = e.getX();
     mouseY = e.getY();
     currentPieceMoving = gameLogic.getMouseLocationPiece(mouseX, mouseY);
-    holdingPiece = true;
+    if (currentPieceMoving.getColour().equals(turn)) {
+      holdingPiece = true;
+    }
 
 
   }
@@ -130,33 +139,41 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     if (turn.equals(currentPieceMoving.getColour())) {
       Tile chosenTile = new Tile(tileX, tileY);
       if(currentPieceMoving.getLegalTiles().contains(chosenTile)){
-        if(currentPieceMoving instanceof King)
-          try {
-
-            if (((King) currentPieceMoving).getCastlingTiles().containsKey(chosenTile)) {
-              Rook chosenRook = ((King) currentPieceMoving).getCastlingTiles().get(chosenTile);
-              if (chosenRook.getX() == 8)
-                board.setPos(chosenRook.getX() - 2, chosenRook.getY(), chosenRook);
-              else
-                board.setPos(chosenRook.getX() + 3, chosenRook.getY(), chosenRook);
-            }
-          } catch (NullPointerException error) {
-            System.out.println("no castling tiles");
-          }
-        board.setPos(tileX, tileY, currentPieceMoving);
-        if (currentPieceMoving instanceof Pawn pawn &&
-                pawn.enPassantPawn) {
-
-          int sign = pawn.getColour().equals("white") ? 1 : -1;
-          board.deletePiece(tileX, tileY - sign);
-          pawn.enPassantPawn = false;
-        }
-        turn = gameLogic.switchTurn(turn);
-        board.setChecksForKings();
+       makeMove(tileX, tileY, currentPieceMoving);
       }
     }
 
   repaint();
+  }
+
+  public void makeMove(int x, int y, Piece piece) {
+    Tile chosenTile = new Tile(x, y);
+    if(currentPieceMoving instanceof King)
+      try {
+
+        if (((King) currentPieceMoving).getCastlingTiles().containsKey(chosenTile)) {
+          Rook chosenRook = ((King) currentPieceMoving).getCastlingTiles().get(chosenTile);
+          if (chosenRook.getX() == 8)
+            board.setPos(chosenRook.getX() - 2, chosenRook.getY(), chosenRook, false);
+          else
+            board.setPos(chosenRook.getX() + 3, chosenRook.getY(), chosenRook, false);
+        }
+      } catch (NullPointerException error) {
+        System.out.println("no castling tiles");
+      }
+
+    board.setPos(x, y, piece, false);
+    if (piece instanceof Pawn pawn &&
+            pawn.enPassantPawn) {
+
+      int sign = pawn.getColour().equals("white") ? 1 : -1;
+      board.deletePiece(x, y - sign);
+      pawn.enPassantPawn = false;
+    }
+    turn = gameLogic.switchTurn(turn);
+    board.setChecksForKings();
+    if(playCpu && turn.equals("black"))
+      cpu.playMove();
   }
 
   @Override
