@@ -1,19 +1,9 @@
 package Models;
-
-import Pieces.King;
-import GameLogic.GamePanel;
-import java.util.ArrayList;
-
 public class GameLogic {
   private final Board board;
   public GameLogic(Board board) {
     this.board = board;
 
-  }
-  public void setChecks() {
-    for (King king : board.getKings()) {
-      king.setCheckIfInCheck(getAllLegalMoves(GamePanel.turn));
-    }
   }
 
   public Piece getMouseLocationPiece(int mouseX, int mouseY){
@@ -41,13 +31,4 @@ public class GameLogic {
     return turn;
   }
 
-  public ArrayList<Tile> getAllLegalMoves(String colour){
-    ArrayList<Tile> legalMoves = new ArrayList<>();
-    for (Tile tile : board.getTilesWithPieces()) {
-      if (tile.getPiece() != null && tile.getPiece().getColor().equals(colour)) {
-        legalMoves.addAll(tile.getPiece().getLegalTiles());
-      }
-    }
-    return legalMoves;
-  }
 }

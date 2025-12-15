@@ -36,6 +36,15 @@ public class Queen extends Piece {
     ArrayList<Tile> tiles = new ArrayList<>();
     tiles.addAll(getAllDiagonalTiles());
     tiles.addAll(getAllStraightTiles());
+    return filterLegalTiles(tiles);
+  }
+
+  @Override
+  public ArrayList<Tile> getAttackTiles() {
+    ArrayList<Tile> tiles = new ArrayList<>();
+    tiles.addAll(getAllDiagonalTiles());
+    tiles.addAll(getAllStraightTiles());
     return tiles;
   }
+
 }

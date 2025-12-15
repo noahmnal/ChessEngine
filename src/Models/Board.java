@@ -2,9 +2,12 @@ package Models;
 
 import Pieces.*;
 import java.util.ArrayList;
+import GameLogic.GamePanel;
 
 public class Board {
   private final ArrayList<Tile> tiles;
+  public boolean whiteInCheck = false;
+  public boolean blackInCheck = false;
   public Board() {
     tiles = new ArrayList<>();
     for (int i = 1; i < 9; i++) {
@@ -94,7 +97,7 @@ public class Board {
 
   public Rook getRookWithPos(String colour, int side) {
     for (Tile tile : getTilesWithPieces()) {
-      if (tile.getPiece() instanceof Rook && tile.getPiece().getColor().equals(colour) && tile.getX() == side) {
+      if (tile.getPiece() instanceof Rook && tile.getPiece().getColour().equals(colour) && tile.getX() == side) {
         return (Rook) tile.getPiece();
       }
     }
@@ -110,4 +113,70 @@ public class Board {
     }
     return kings;
   }
+
+  public void setInCheck(String colour, boolean value) {
+    if (colour.equals("white"))
+      whiteInCheck = value;
+    else
+      blackInCheck = value;
+    System.out.println(whiteInCheck + " " + blackInCheck);
+  }
+
+  public ArrayList<Tile> getAllAttackedTiles(String colour) {
+    ArrayList<Tile> attackedTiles = new ArrayList<>();
+    for (Tile tile : getTilesWithPieces()) {
+      if (tile.getPiece().getColour().equals(colour)) {
+        try {
+          attackedTiles.addAll(tile.getPiece().getAttackTiles());
+        } catch (NullPointerException e) {System.out.println(tile.getPiece() + "Have" + e.getMessage());}
+      }
+    }
+    return attackedTiles;
+  }
+
+  public void setChecksForKings() {
+    Tile myTile;
+    String colour;
+    for (King king : getKings()) {
+        myTile = new Tile(king.getX(), king.getY());
+        if (GamePanel.turn.equals("white"))
+          colour = "black";
+        else colour = "white";
+        if (getAllAttackedTiles(colour).contains(myTile)) {
+          setInCheck(king.colour, true);
+          king.inCheck = true;
+        }
+        else  {
+          setInCheck(king.colour, false);
+          king.inCheck = false;
+        }
+    }
+  }
+
+  public boolean simulateIsMoveLegal(Piece piece, Tile targetTile) {
+    int oldX = piece.getX();
+    int oldY = piece.getY();
+
+    Piece captured = null;
+    for (Tile t : getTiles()) {
+      if (t.equals(targetTile)) {
+        captured = t.getPiece();
+      }
+    }
+
+    setPos(targetTile.getX(), targetTile.getY(), piece);
+    setChecksForKings();
+
+    boolean kingInCheck =
+            piece.getColour().equals("white") ? whiteInCheck : blackInCheck;
+
+    setPos(oldX, oldY, piece);
+    if (captured != null) {
+      setPos(targetTile.getX(), targetTile.getY(), captured);
+    }
+    setChecksForKings();
+
+    return !kingInCheck;
+  }
+
 }

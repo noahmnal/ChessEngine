@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class King extends Piece {
   private final HashMap<Tile, Rook> castlingTile;
-  public boolean checkIfInCheck = false;
+  public boolean inCheck = false;
 
   public King(int x, int y, String color,  Board board) {
     super(x,y,color, board);
@@ -38,27 +38,35 @@ public class King extends Piece {
     ArrayList<Tile> legalTiles = new ArrayList<>();
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
+        if (x+i < 1 || x+i > 8 || y+j < 1 || y+j > 8) continue;
         Tile tile = new Tile(x+i, y+j);
         if (!checkIfOwnColour(legalTiles, tile))
           legalTiles.add(tile);
       }
     }
     castleIfPossible(legalTiles);
-    return legalTiles;
+    return filterLegalTiles(legalTiles);
   }
-  public boolean getCheckIfInCheck() {
-    return checkIfInCheck;
+  public boolean getInCheck() {
+    return inCheck;
   }
 
-  public void setCheckIfInCheck(ArrayList<Tile> AllLegalTilesOponent) {
-    Tile myTile = new Tile(x, y);
-    checkIfInCheck = AllLegalTilesOponent.contains(myTile);
+  @Override
+  public ArrayList<Tile> getAttackTiles() {
+    ArrayList<Tile> attackTiles = new ArrayList<>();
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
+        if (i == 0 && j == 0) continue;
+        attackTiles.add(new Tile(x + i, y + j));
+      }
+    }
+    return attackTiles;
   }
 
   public void castleIfPossible(ArrayList<Tile> legalTiles) {
     if (!haveMoved) {
-      Rook kingRook = board.getRookWithPos(color, 8);
-      Rook queenRook = board.getRookWithPos(color, 1);
+      Rook kingRook = board.getRookWithPos(colour, 8);
+      Rook queenRook = board.getRookWithPos(colour, 1);
       if (kingRook.getHaveNotMoved()) {
         ArrayList<Tile> castlingKing = findTilesStraightLine(1, x, true);
         if (castlingKing.size() == 2) {

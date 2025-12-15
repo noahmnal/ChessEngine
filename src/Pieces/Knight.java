@@ -33,17 +33,27 @@ public class Knight extends Piece {
 
   @Override
   public ArrayList<Tile> getLegalTiles() {
-    ArrayList<Tile> legalTiles = new ArrayList<>();
+    return filterLegalTiles(findMoves());
+  }
+
+  public ArrayList<Tile> findMoves() {
+    ArrayList<Tile> tiles = new ArrayList<>();
     for (int i = -2; i < 3; i++) {
       for (int j = -2; j < 3; j++) {
         if (Math.abs(i) + Math.abs(j) == 3) {
           Tile tile = new Tile(x+i, y+j);
-          if (!checkIfOwnColour(legalTiles, tile))
-            legalTiles.add(tile);
+          if (!checkIfOwnColour(tiles, tile))
+            tiles.add(tile);
         }
       }
     }
-    return legalTiles;
+    return tiles;
   }
+
+  @Override
+  public ArrayList<Tile> getAttackTiles() {
+    return findMoves();
+  }
+
 
 }

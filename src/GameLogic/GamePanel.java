@@ -70,11 +70,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     for (Tile tile : board.getTiles()) {
       if (tile.getPiece() != null) {
         if (tile.getPiece() instanceof King)
-          if (((King) tile.getPiece()).getCheckIfInCheck()) {
+          if (((King) tile.getPiece()).getInCheck()) {
             g.setColor(Color.BLUE);
             g.fillRect((tile.getX()-1)*tileSize, (tile.getY()-1)*tileSize, tileSize, tileSize);
           }
-        if (tile.getPiece().getColor().equals("white")) {
+        if (tile.getPiece().getColour().equals("white")) {
           g.drawImage(tile.getPiece().getWhiteImage(), (tile.getPiece().getX() - 1) * tileSize, (tile.getPiece().getY() - 1) * tileSize, null);
         } else
           g.drawImage(tile.getPiece().getBlackImage(), (tile.getPiece().getX() - 1) * tileSize, (tile.getPiece().getY() - 1) * tileSize, null);
@@ -126,9 +126,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     mouseY = e.getY();
     int tileX = gameLogic.getMouseLocationTile(mouseX, mouseY).getX();
     int tileY = gameLogic.getMouseLocationTile(mouseX, mouseY).getY();
-    System.out.println("Tile X: " + tileX + " Tile Y: " + tileY);
-    if (turn.equals(currentPieceMoving.getColor())) {
-      System.out.println("legal tiles = " + currentPieceMoving.getLegalTiles());
+    if (turn.equals(currentPieceMoving.getColour())) {
       Tile chosenTile = new Tile(tileX, tileY);
       if(currentPieceMoving.getLegalTiles().contains(chosenTile)){
         if(currentPieceMoving instanceof King)
@@ -145,9 +143,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
             System.out.println("no castling tiles");
           }
         board.setPos(tileX, tileY, currentPieceMoving);
-        gameLogic.setChecks();
         turn = gameLogic.switchTurn(turn);
-
+        board.setChecksForKings();
       }
     }
 

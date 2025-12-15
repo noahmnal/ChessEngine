@@ -23,8 +23,8 @@ public abstract class Piece {
     return !haveMoved;
   }
 
-  public String getColor() {
-    return color;
+  public String getColour() {
+    return colour;
   }
 
   public Image getWhiteImage() {
@@ -45,18 +45,19 @@ public abstract class Piece {
 
   protected int x;
   protected int y;
-  protected String color;
+  protected String colour;
   protected Image whiteImage;
 
 
   public abstract ArrayList<Tile> getLegalTiles();
+  public abstract ArrayList<Tile> getAttackTiles();
   protected Image blackImage;
 
 
-  protected Piece(int x, int y, String color, Board board) {
+  protected Piece(int x, int y, String colour, Board board) {
     this.x = x;
     this.y = y;
-    this.color = color;
+    this.colour = colour;
     this.board = board;
 
   }
@@ -81,7 +82,7 @@ public abstract class Piece {
   protected boolean checkIfOwnColour(ArrayList<Tile> tiles, Tile tile) {
     if (board.getTilesWithPieces().contains(tile)) {
       int index = board.getTilesWithPieces().indexOf(tile);
-      if (!board.getTilesWithPieces().get(index).getPiece().getColor().equals(color)) {
+      if (!board.getTilesWithPieces().get(index).getPiece().getColour().equals(colour)) {
         tiles.add(tile);
       }
       return true;
@@ -125,4 +126,16 @@ public abstract class Piece {
     tiles.addAll(findTilesDiagonal(-1, false));
     return tiles;
   }
+
+  protected ArrayList<Tile> filterLegalTiles(ArrayList<Tile> candidateTiles) {
+    ArrayList<Tile> legal = new ArrayList<>();
+
+    for (Tile tile : candidateTiles) {
+      if (board.simulateIsMoveLegal(this, tile)) {
+        legal.add(tile);
+      }
+    }
+    return legal;
+  }
+
 }

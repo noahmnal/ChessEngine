@@ -31,6 +31,17 @@ public class Rook extends Piece {
 
   @Override
   public ArrayList<Tile> getLegalTiles() {
+    if (board.whiteInCheck && colour.equals("white"))
+      return new ArrayList<>();
+    if (board.blackInCheck && colour.equals("black"))
+      return new ArrayList<>();
+    return filterLegalTiles(getAllStraightTiles());
+  }
+
+  @Override
+  public ArrayList<Tile> getAttackTiles() {
     return getAllStraightTiles();
   }
+
+
 }

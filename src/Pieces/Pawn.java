@@ -26,11 +26,19 @@ public class Pawn extends Piece {
 
   @Override
   public ArrayList<Tile> getLegalTiles() {
-    if (GamePanel.turn.equals("white")) {
-      return func(2, 1);
+    if (colour.equals("white")) {
+      return filterLegalTiles(func(2, 1));
     }
-    else {return func(7, -1);}
+    else {return filterLegalTiles(func(7, -1));}
 }
+
+  @Override
+  public ArrayList<Tile> getAttackTiles() {
+    ArrayList<Tile> attackingTiles = new ArrayList<>();
+    if (colour.equals("white")) findDiagonalTiles(attackingTiles, 1);
+    else findDiagonalTiles(attackingTiles, -1);
+    return attackingTiles;
+  }
 
   private ArrayList<Tile> func(int rowCheck, int sign) {
     ArrayList<Tile> legalTiles = new ArrayList<>();
@@ -47,11 +55,17 @@ public class Pawn extends Piece {
       if (!checkForPiecesBlocking(newTile))
         legalTiles.add(newTile);
     }
+    findDiagonalTiles(legalTiles, sign);
+
+    return legalTiles;
+  }
+  private void findDiagonalTiles(ArrayList<Tile> legalTiles, int sign) {
+    Tile newTile;
     for (int i = -1; i < 2; i += 2) {
       newTile = new Tile(x + i, y + sign);
       if (checkForPiecesBlocking(newTile))
         checkIfOwnColour(legalTiles, newTile);
     }
-    return legalTiles;
   }
+
 }
