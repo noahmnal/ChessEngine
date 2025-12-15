@@ -2,7 +2,7 @@ package GameLogic;
 
 import Models.Board;
 import Models.GameLogic;
-import Models.Piece;
+import Pieces.Piece;
 import Models.Tile;
 import Pieces.King;
 import Pieces.Pawn;
@@ -174,6 +174,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     board.setChecksForKings();
     if(playCpu && turn.equals("black"))
       cpu.playMove();
+    PositionRater.ratePosition(board.getPieces());
   }
 
   @Override

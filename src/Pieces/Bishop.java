@@ -2,7 +2,6 @@ package Pieces;
 
 import GameLogic.GamePanel;
 import Models.Board;
-import Models.Piece;
 import Models.Tile;
 
 import javax.swing.*;
@@ -13,6 +12,7 @@ import java.util.Objects;
 public class Bishop extends Piece {
   public Bishop(int x, int y, String color, Board board)  {
     super(x,y,color,board);
+    value = 3;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteBishop.png"))
     ).getImage().getScaledInstance(

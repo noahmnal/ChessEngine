@@ -1,4 +1,7 @@
 package Models;
+
+import Pieces.Piece;
+
 public class GameLogic {
   private final Board board;
   public GameLogic(Board board) {

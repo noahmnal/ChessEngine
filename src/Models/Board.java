@@ -120,10 +120,20 @@ public class Board {
     return tilesWithPieces;
   }
 
+  public ArrayList<Piece> getPieces() {
+    ArrayList<Piece> pieces = new ArrayList<>();
+    for (Tile tile : tiles) {
+      if (tile.getPiece() != null) {
+        pieces.add(tile.getPiece());
+      }
+    }
+    return pieces;
+  }
+
   public ArrayList<Piece> getColouredPieces(String colour) {
     ArrayList<Piece> pieces = new ArrayList<>();
     for (Tile tile : getTilesWithPieces()) {
-      if (tile.getPiece().colour.equals(colour)) {
+      if (tile.getPiece().getColour().equals(colour)) {
         pieces.add(tile.getPiece());
       }
     }
@@ -139,7 +149,7 @@ public class Board {
     return null;
   }
 
-  ArrayList<King> getKings() {
+  private ArrayList<King> getKings() {
     ArrayList<King> kings = new ArrayList<>();
     for (Tile tile : getTilesWithPieces()) {
       if (tile.getPiece() instanceof King) {
@@ -149,7 +159,7 @@ public class Board {
     return kings;
   }
 
-  public void setInCheck(String colour, boolean value) {
+  private void setInCheck(String colour, boolean value) {
     if (colour.equals("white"))
       whiteInCheck = value;
     else
@@ -168,7 +178,7 @@ public class Board {
     return attackedTiles;
   }
 
-  public Pawn lookForPromotion() {
+  private Pawn lookForPromotion() {
     for (Tile tile : getTilesWithPieces()) {
       if (tile.getPiece() instanceof Pawn pawn) {
         boolean promote =
@@ -183,9 +193,6 @@ public class Board {
   }
 
   private void promotion(Pawn pawn) {
-    boolean promote =
-            (pawn.getColour().equals("white") && pawn.getY() == 8) ||
-                    (pawn.getColour().equals("black") && pawn.getY() == 1);
       Queen queen = new Queen(pawn.getX(), pawn.getY(), pawn.getColour(), this);
       getTile(pawn.getX(), pawn.getY()).setPiece(queen);
   }
@@ -209,11 +216,11 @@ public class Board {
           colour = "black";
         else colour = "white";
         if (getAllAttackedTiles(colour).contains(myTile)) {
-          setInCheck(king.colour, true);
+          setInCheck(king.getColour(), true);
           king.inCheck = true;
         }
         else  {
-          setInCheck(king.colour, false);
+          setInCheck(king.getColour(), false);
           king.inCheck = false;
         }
     }

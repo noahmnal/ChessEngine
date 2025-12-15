@@ -2,7 +2,6 @@ package Pieces;
 
 import GameLogic.GamePanel;
 import Models.Board;
-import Models.Piece;
 import Models.Tile;
 
 import javax.swing.*;
@@ -15,6 +14,7 @@ public class Knight extends Piece {
 
   public Knight(int x, int y, String color, Board board) {
     super(x,y,color, board);
+    value = 3;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteKnight.png"))
     ).getImage().getScaledInstance(
