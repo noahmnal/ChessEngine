@@ -1,7 +1,9 @@
 package GameLogic;
 
 import Models.Board;
+import Pieces.Pawn;
 import Pieces.Piece;
+import Pieces.Queen;
 import Pieces.Rook;
 
 public class Move {
@@ -16,6 +18,7 @@ public class Move {
   private final boolean castle;
   private Rook castlingRook;
   private boolean firstMove = false;
+  private Pawn promotion = null;
 
   public Move(int fromX, int fromY, int toX, int toY, Piece piece, Piece capturedPiece) {
     this.fromX = fromX;
@@ -32,7 +35,7 @@ public class Move {
   }
 
   //special constructor for castling and passant
-  public Move(int fromX, int fromY, int toX, int toY, Piece piece, boolean enPassant, int direction, Rook castlingRook) {
+  public Move(int fromX, int fromY, int toX, int toY, Piece piece, boolean enPassant, int direction, Rook castlingRook, Pawn promotion) {
     this.fromX = fromX;
     this.fromY = fromY;
     this.toX = toX;
@@ -42,12 +45,22 @@ public class Move {
     this.direction = direction;
     this.castlingRook = castlingRook;
     this.castle = castlingRook != null;
+    this.promotion = promotion;
     setCapturedPiece();
     if (enPassant)
       updateCapturedPieceAfterEnPassant(direction);
     if (piece.getHaveNotMoved())
       firstMove = true;
+    System.out.println(this);
 
+  }
+
+  public boolean isPromotion() {
+    return promotion != null;
+  }
+
+  public Pawn getPromotionPiece() {
+    return promotion;
   }
 
 
@@ -123,5 +136,23 @@ public class Move {
 
   public boolean getEnPassant() {
     return enPassant;
+  }
+
+  @Override
+  public String toString() {
+    return "Move{" +
+            "fromX=" + fromX +
+            ", fromY=" + fromY +
+            ", toX=" + toX +
+            ", toY=" + toY +
+            ", piece=" + piece +
+            ", capturedPiece=" + capturedPiece +
+            ", enPassant=" + enPassant +
+            ", direction=" + direction +
+            ", castle=" + castle +
+            ", castlingRook=" + castlingRook +
+            ", firstMove=" + firstMove +
+            ", promotion=" + promotion +
+            '}';
   }
 }

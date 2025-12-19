@@ -180,33 +180,36 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
             pawn.enPassantPawn) {
       int sign = pawn.getColour().equals("white") ? 1 : -1;
       pawn.enPassantPawn = false;
-      board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null), false);
+      board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null), false);
       board.deletePieceFromTile(x, y - sign);
       moveMade = true;
-    } else if(currentPieceMoving instanceof King) {
+    } else if (board.lookForPromotion(piece)  != null) {
+      moveMade = true;
+      board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece,
+              false, 0, null, board.lookForPromotion(piece)), false);
+    }
+
+    else if(currentPieceMoving instanceof King) {
       try {
         if (((King) currentPieceMoving).getCastlingTiles().containsKey(chosenTile)) {
           Rook chosenRook = ((King) currentPieceMoving).getCastlingTiles().get(chosenTile);
           if (chosenRook.getX() == 8) {
             board.makeMove(new Move(currentPieceMoving.getX(),
                     currentPieceMoving.getY(), x, y, currentPieceMoving, false,
-                    -2, chosenRook), false);
+                    -2, chosenRook, null), false);
           }
           else {
             board.makeMove(new Move(currentPieceMoving.getX(), currentPieceMoving.getY(),
-                    x, y, currentPieceMoving, false, 3, chosenRook), false);
+                    x, y, currentPieceMoving, false, 3, chosenRook, null), false);
           }
           moveMade = true;
         }
-      } catch (NullPointerException error) {
-        System.out.println("no castling tiles");
+      } catch (NullPointerException _) {
       }
     }
     if (!moveMade) {
       Piece capturedPiece = Board.getCapturedPiece(x, y, piece, false, 0);
       board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece, capturedPiece), false);
-      if (capturedPiece != null) {System.out.println(capturedPiece);}
-      else {System.out.println("noooo");}
 
     }
 

@@ -85,8 +85,8 @@ public class Board {
     move.getPiece().setX(move.getToX());
     move.getPiece().setY(move.getToY());
     movePieceToNewTIle(move.getPiece());
-    if (lookForPromotion() != null)
-      promotion(Objects.requireNonNull(lookForPromotion()));
+    if (move.isPromotion())
+      promotion(move.getPromotionPiece());
     if (!simulation) {
       MovesHistory.addMove(move);
       move.getPiece().setHaveMoved(true);
@@ -188,17 +188,15 @@ public class Board {
     return attackedTiles;
   }
 
-  private Pawn lookForPromotion() {
-    for (Tile tile : getTilesWithPieces()) {
-      if (tile.getPiece() instanceof Pawn pawn) {
+  public Pawn lookForPromotion(Piece piece) {
+      if (piece instanceof Pawn pawn) {
         boolean promote =
-                (pawn.getColour().equals("white") && pawn.getY() == 8) ||
-                        (pawn.getColour().equals("black") && pawn.getY() == 1);
+                (pawn.getColour().equals("white") && pawn.getY() == 7) ||
+                        (pawn.getColour().equals("black") && pawn.getY() == 2);
         if (promote)
           return pawn;
 
       }
-    }
     return null;
   }
 
@@ -247,14 +245,9 @@ public class Board {
   public static Piece getCapturedPiece(int x, int y, Piece piece, boolean enPassant, int sign) {
     Piece capturedPiece;
     if (!enPassant) {
-      System.out.println("kom 250");
       if (getTile(x, y).getPiece() != null) {
-        System.out.println("kom 251");
-        System.out.println(x + " y :" + y);
         if (!Board.getTile(x, y).getPiece().getColour().equals(piece.getColour())) {
-
           capturedPiece = Board.getTile(x, y).getPiece();
-          System.out.println("captured piece" + capturedPiece);
           return capturedPiece;
         }
       }
@@ -303,6 +296,10 @@ public class Board {
       move.getCastlingRook().setX(move.getCastlingRook().getX()-move.getDirection());
       movePieceToNewTIle(move.getCastlingRook());
     }
+    if (move.isPromotion()) {
+      deletePieceFromTile(move.getToX(), move.getToY());
+    }
+
     if (move.getCapturedPiece() != null)
       getTile(move.getCapturedPiece().getX(), move.getCapturedPiece().getY()).setPiece(move.getCapturedPiece());
 
@@ -310,6 +307,7 @@ public class Board {
     move.getPiece().setX(move.getFromX());
     move.getPiece().setY(move.getFromY());
     movePieceToNewTIle(move.getPiece());
+
     if (!simulate) {
       MovesHistory.removeLast();
       if (move.isFirstMove())
