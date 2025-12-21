@@ -13,7 +13,7 @@ public class PositionRater {
     this.board = board;
   }
 
-  public static void ratePosition(ArrayList<Piece> pieces) {
+  public static int ratePosition(ArrayList<Piece> pieces) {
     int whitePieceValue = 0;
     int blackPieceValue = 0;
     int rating;
@@ -24,7 +24,7 @@ public class PositionRater {
       else blackPieceValue += piece.value;
     }
     rating = whitePieceValue - blackPieceValue;
-    System.out.println(rating);
+    return rating;
 
 
   }

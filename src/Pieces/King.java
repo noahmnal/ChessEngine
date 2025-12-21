@@ -1,6 +1,4 @@
 package Pieces;
-
-import GameLogic.GamePanel;
 import Models.Board;
 import Models.Tile;
 
@@ -59,20 +57,24 @@ public class King extends Piece {
     if (!haveMoved) {
       Rook kingRook = board.getRookWithPos(colour, 8);
       Rook queenRook = board.getRookWithPos(colour, 1);
-      if (kingRook.getHaveNotMoved()) {
-        ArrayList<Tile> castlingKing = findTilesStraightLine(1, x, true);
-        if (castlingKing.size() == 2) {
-          legalTiles.add(castlingKing.getLast());
-          castlingTile.putIfAbsent(castlingKing.getLast(), kingRook);
+      if (kingRook != null) {
+        if (kingRook.getHaveNotMoved()) {
+          ArrayList<Tile> castlingKing = findTilesStraightLine(1, x, true);
+          if (castlingKing.size() == 2) {
+            legalTiles.add(castlingKing.getLast());
+            castlingTile.putIfAbsent(castlingKing.getLast(), kingRook);
 
+          }
         }
       }
+      if (queenRook != null) {
       if (queenRook.getHaveNotMoved()) {
         ArrayList<Tile> castlingQueen = findTilesStraightLine(-1, x, true);
         if (castlingQueen.size() == 3) {
           legalTiles.add(castlingQueen.get(1));
-          castlingTile.put(castlingQueen.get(1),  queenRook);
+          castlingTile.put(castlingQueen.get(1), queenRook);
         }
+      }
       }
     }
   }

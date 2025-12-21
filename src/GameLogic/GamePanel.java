@@ -130,12 +130,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
   @Override
   public void mouseClicked(MouseEvent e) {
-
   }
 
   @Override
   public void mousePressed(MouseEvent e) {
-    System.out.println("Mouse pressed");
     mouseX = e.getX();
     mouseY = e.getY();
     currentPieceMoving = gameLogic.getMouseLocationPiece(mouseX, mouseY);
@@ -153,7 +151,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   @Override
   public void mouseReleased(MouseEvent e) {
     holdingPiece = false;
-    System.out.println("Mouse released");
     mouseX = e.getX();
     mouseY = e.getY();
     int tileX = gameLogic.getMouseLocationTile(mouseX, mouseY).getX();
@@ -161,8 +158,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     try {
       if (turn.equals(currentPieceMoving.getColour())) {
         Tile chosenTile = new Tile(tileX, tileY);
-        if(currentPieceMoving.getLegalTiles().contains(chosenTile)){
-          makeMove(tileX, tileY, currentPieceMoving);
+        if(currentPieceMoving.getLegalTiles().contains(chosenTile)) {
+          Move move = createMove(tileX, tileY, currentPieceMoving);
+          board.makeMove(move, false);
+          repaint();
+          if(playCpu && turn.equals("black"))
+            cpu.playMove();
         }
       }
     } catch (NullPointerException _ ) {
@@ -172,54 +173,36 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   repaint();
   }
 
-  public void makeMove(int x, int y, Piece piece) {
+  public Move createMove(int x, int y, Piece piece) {
     Tile chosenTile = new Tile(x, y);
-    boolean moveMade = false;
-
     if (piece instanceof Pawn pawn &&
             pawn.enPassantPawn) {
       int sign = pawn.getColour().equals("white") ? 1 : -1;
       pawn.enPassantPawn = false;
-      board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null), false);
-      board.deletePieceFromTile(x, y - sign);
-      moveMade = true;
+      return new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null);
     } else if (board.lookForPromotion(piece)  != null) {
-      moveMade = true;
-      board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece,
-              false, 0, null, board.lookForPromotion(piece)), false);
+      return new Move(piece.getX(), piece.getY(), x, y, piece,
+              false, 0, null, board.lookForPromotion(piece));
     }
-
     else if(currentPieceMoving instanceof King) {
       try {
         if (((King) currentPieceMoving).getCastlingTiles().containsKey(chosenTile)) {
           Rook chosenRook = ((King) currentPieceMoving).getCastlingTiles().get(chosenTile);
           if (chosenRook.getX() == 8) {
-            board.makeMove(new Move(currentPieceMoving.getX(),
+            return new Move(currentPieceMoving.getX(),
                     currentPieceMoving.getY(), x, y, currentPieceMoving, false,
-                    -2, chosenRook, null), false);
+                    -2, chosenRook, null);
           }
           else {
-            board.makeMove(new Move(currentPieceMoving.getX(), currentPieceMoving.getY(),
-                    x, y, currentPieceMoving, false, 3, chosenRook, null), false);
+            return new Move(currentPieceMoving.getX(), currentPieceMoving.getY(),
+                    x, y, currentPieceMoving, false, 3, chosenRook, null);
           }
-          moveMade = true;
         }
       } catch (NullPointerException _) {
       }
     }
-    if (!moveMade) {
       Piece capturedPiece = Board.getCapturedPiece(x, y, piece, false, 0);
-      board.makeMove(new Move(piece.getX(), piece.getY(), x, y, piece, capturedPiece), false);
-
-    }
-
-
-    turn = gameLogic.switchTurn(turn);
-    board.setChecksForKings();
-    if(playCpu && turn.equals("black"))
-      cpu.playMove();
-    PositionRater.ratePosition(board.getPieces());
-    repaint();
+      return new Move(piece.getX(), piece.getY(), x, y, piece, capturedPiece);
   }
 
   @Override

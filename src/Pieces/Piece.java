@@ -140,8 +140,4 @@ public abstract class Piece {
     }
     return legal;
   }
-
-  public void removeFromTile() {
-    Board.getTile(x, y).setPiece(null);
-  }
 }

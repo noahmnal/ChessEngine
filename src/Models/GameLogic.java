@@ -27,7 +27,7 @@ public class GameLogic {
     return null;
   }
 
-  public String switchTurn(String inTurn){
+  public static String switchTurn(String inTurn){
     String turn;
     if (inTurn.equals("white")) turn = "black";
     else turn = "white";

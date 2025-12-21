@@ -31,7 +31,6 @@ public class Move {
     castle = false;
     if (piece.getHaveNotMoved())
       firstMove = true;
-    System.out.println(firstMove);
   }
 
   //special constructor for castling and passant
@@ -51,7 +50,6 @@ public class Move {
       updateCapturedPieceAfterEnPassant(direction);
     if (piece.getHaveNotMoved())
       firstMove = true;
-    System.out.println(this);
 
   }
 
@@ -73,7 +71,6 @@ public class Move {
     if (Board.getTile(toX, toY).getPiece() != null) {
       if (!Board.getTile(toX, toY).getPiece().getColour().equals(piece.getColour())) {
         this.capturedPiece = Board.getTile(toX, toY).getPiece();
-        System.out.println("captured piece" + capturedPiece);
         return;
       }
     }
@@ -102,11 +99,6 @@ public class Move {
 
   private void updateCapturedPieceAfterEnPassant(int sign) {
     capturedPiece = Board.getTile(toX, toY-sign).getPiece();
-    try {
-      System.out.println(capturedPiece.toString() + "passant!!!");
-    } catch (Exception e) {
-      System.out.println("Passant null");
-    }
   }
 
   public Piece getCapturedPiece() {
@@ -147,12 +139,6 @@ public class Move {
             ", toY=" + toY +
             ", piece=" + piece +
             ", capturedPiece=" + capturedPiece +
-            ", enPassant=" + enPassant +
-            ", direction=" + direction +
-            ", castle=" + castle +
-            ", castlingRook=" + castlingRook +
-            ", firstMove=" + firstMove +
-            ", promotion=" + promotion +
             '}';
   }
 }

@@ -85,12 +85,44 @@ public class Board {
     move.getPiece().setX(move.getToX());
     move.getPiece().setY(move.getToY());
     movePieceToNewTIle(move.getPiece());
+    if (move.getEnPassant()) {
+      deletePieceFromTile(move.getToX(), move.getToY() - move.getDirection());
+    }
     if (move.isPromotion())
       promotion(move.getPromotionPiece());
     if (!simulation) {
       MovesHistory.addMove(move);
       move.getPiece().setHaveMoved(true);
     }
+    GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
+    setChecksForKings();
+  }
+
+  public  void reverseMove(Move move, boolean simulate) {
+    if (move.isCastle()) {
+      deletePieceFromTile(move.getCastlingRook());
+      move.getCastlingRook().setX(move.getCastlingRook().getX() - move.getDirection());
+      movePieceToNewTIle(move.getCastlingRook());
+    }
+    if (move.isPromotion()) {
+      deletePieceFromTile(move.getToX(), move.getToY());
+    }
+
+    if (move.getCapturedPiece() != null)
+      getTile(move.getCapturedPiece().getX(), move.getCapturedPiece().getY()).setPiece(move.getCapturedPiece());
+
+    deletePieceFromTile(move.getPiece());
+    move.getPiece().setX(move.getFromX());
+    move.getPiece().setY(move.getFromY());
+    movePieceToNewTIle(move.getPiece());
+
+    if (!simulate) {
+      MovesHistory.removeLast();
+      if (move.isFirstMove())
+        move.getPiece().setHaveMoved(false);
+    }
+
+    GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
   public void deletePieceFromTile(int x, int y) {
@@ -182,7 +214,7 @@ public class Board {
       if (tile.getPiece().getColour().equals(colour)) {
         try {
           attackedTiles.addAll(tile.getPiece().getAttackTiles());
-        } catch (NullPointerException e) {System.out.println(tile.getPiece() + "Have" + e.getMessage());}
+        } catch (NullPointerException _) {}
       }
     }
     return attackedTiles;
@@ -204,6 +236,7 @@ public class Board {
       Queen queen = new Queen(pawn.getX(), pawn.getY(), pawn.getColour(), this);
       getTile(pawn.getX(), pawn.getY()).setPiece(queen);
   }
+
 
   public static Tile getTile(int x, int y) {
     for (Tile tile : tiles) {
@@ -290,47 +323,12 @@ public class Board {
       return !illegal;
   }
 
-  public  void reverseMove(Move move, boolean simulate) {
-    if (move.isCastle()) {
-      deletePieceFromTile(move.getCastlingRook());
-      move.getCastlingRook().setX(move.getCastlingRook().getX()-move.getDirection());
-      movePieceToNewTIle(move.getCastlingRook());
+  public Piece getPiece(int x, int y) {
+    for (Piece piece : getPieces()) {
+      if (piece.getX() == x && piece.getY() == y) {
+        return piece;
+      }
     }
-    if (move.isPromotion()) {
-      deletePieceFromTile(move.getToX(), move.getToY());
-    }
-
-    if (move.getCapturedPiece() != null)
-      getTile(move.getCapturedPiece().getX(), move.getCapturedPiece().getY()).setPiece(move.getCapturedPiece());
-
-    deletePieceFromTile(move.getPiece());
-    move.getPiece().setX(move.getFromX());
-    move.getPiece().setY(move.getFromY());
-    movePieceToNewTIle(move.getPiece());
-
-    if (!simulate) {
-      MovesHistory.removeLast();
-      if (move.isFirstMove())
-        move.getPiece().setHaveMoved(false);
-    }
-
-    if (GamePanel.turn.equals("white"))
-      GamePanel.turn = "black";
-    else
-      GamePanel.turn = "white";
+    return null;
   }
-
-
-    /*
-    if (move.getEnPassant())
-      return new Move(move.getToX(), move.getToY(), move.getFromX(),
-              move.getFromY(), move.getPiece(), move.getEnPassant(), move.getDirection(), null);
-    else if (move.isCastle())
-      return new Move(move.getToX(), move.getToY(), move.getFromX(),
-              move.getFromY(), move.getPiece(), move.getEnPassant(), -move.getDirection(), move.getCastlingRook());
-    else
-      return new Move(move.getToX(), move.getToY(), move.getFromX(), move.getFromY(), move.getPiece());
-  }
-  */
-
 }
