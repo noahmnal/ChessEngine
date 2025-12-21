@@ -144,8 +144,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     } catch (NullPointerException _) {
     }
     repaint();
-
-
   }
 
   @Override
@@ -184,18 +182,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
       return new Move(piece.getX(), piece.getY(), x, y, piece,
               false, 0, null, board.lookForPromotion(piece));
     }
-    else if(currentPieceMoving instanceof King) {
+    else if(piece instanceof King) {
       try {
-        if (((King) currentPieceMoving).getCastlingTiles().containsKey(chosenTile)) {
-          Rook chosenRook = ((King) currentPieceMoving).getCastlingTiles().get(chosenTile);
+        if (((King) piece).getCastlingTiles().containsKey(chosenTile)) {
+          Rook chosenRook = ((King) piece).getCastlingTiles().get(chosenTile);
           if (chosenRook.getX() == 8) {
-            return new Move(currentPieceMoving.getX(),
-                    currentPieceMoving.getY(), x, y, currentPieceMoving, false,
+            return new Move(piece.getX(),
+                    piece.getY(), x, y, piece, false,
                     -2, chosenRook, null);
           }
           else {
-            return new Move(currentPieceMoving.getX(), currentPieceMoving.getY(),
-                    x, y, currentPieceMoving, false, 3, chosenRook, null);
+            return new Move(piece.getX(), piece.getY(),
+                    x, y, piece, false, 3, chosenRook, null);
           }
         }
       } catch (NullPointerException _) {

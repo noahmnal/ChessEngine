@@ -1,6 +1,10 @@
 package Models;
 
+import Pieces.King;
+import Pieces.Pawn;
 import Pieces.Piece;
+import Pieces.Rook;
+import GameLogic.Move;
 
 public class GameLogic {
   private final Board board;

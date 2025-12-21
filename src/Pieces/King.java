@@ -24,7 +24,7 @@ public class King extends Piece {
     ).getImage();
   }
   @Override
-  public ArrayList<Tile> getLegalTiles() {
+  public ArrayList<Tile> getSudoLegalTiles() {
     ArrayList<Tile> legalTiles = new ArrayList<>();
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
@@ -35,7 +35,7 @@ public class King extends Piece {
       }
     }
     castleIfPossible(legalTiles);
-    return filterLegalTiles(legalTiles);
+    return legalTiles;
   }
   public boolean getInCheck() {
     return inCheck;
@@ -51,6 +51,11 @@ public class King extends Piece {
       }
     }
     return attackTiles;
+  }
+
+  @Override
+  public ArrayList<Tile> getLegalTiles() {
+    return filterLegalTiles(getSudoLegalTiles());
   }
 
   public void castleIfPossible(ArrayList<Tile> legalTiles) {

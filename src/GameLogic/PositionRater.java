@@ -6,12 +6,6 @@ import Pieces.Piece;
 import java.util.ArrayList;
 
 public class PositionRater {
-  private final Board board;
-
-
-  public PositionRater(Board board) {
-    this.board = board;
-  }
 
   public static int ratePosition(ArrayList<Piece> pieces) {
     int whitePieceValue = 0;

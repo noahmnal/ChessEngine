@@ -30,4 +30,8 @@ public class Bishop extends Piece {
     return getAllDiagonalTiles();
   }
 
+  @Override
+  public ArrayList<Tile> getSudoLegalTiles() {
+    return getAllDiagonalTiles();
+  }
 }

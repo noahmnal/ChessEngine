@@ -27,6 +27,11 @@ public class Knight extends Piece {
     return filterLegalTiles(findMoves());
   }
 
+  @Override
+  public ArrayList<Tile> getSudoLegalTiles() {
+    return findMoves();
+  }
+
   public ArrayList<Tile> findMoves() {
     ArrayList<Tile> tiles = new ArrayList<>();
     for (int i = -2; i < 3; i++) {

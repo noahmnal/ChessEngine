@@ -31,6 +31,8 @@ public class Queen extends Piece {
     return filterLegalTiles(tiles);
   }
 
+
+
   @Override
   public ArrayList<Tile> getAttackTiles() {
     ArrayList<Tile> tiles = new ArrayList<>();
@@ -39,4 +41,11 @@ public class Queen extends Piece {
     return tiles;
   }
 
+  @Override
+  public ArrayList<Tile> getSudoLegalTiles() {
+      ArrayList<Tile> tiles = new ArrayList<>();
+      tiles.addAll(getAllDiagonalTiles());
+      tiles.addAll(getAllStraightTiles());
+      return tiles;
+  }
 }

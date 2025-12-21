@@ -24,7 +24,7 @@ public class Pawn extends Piece {
 
 
   @Override
-  public ArrayList<Tile> getLegalTiles() {
+  public ArrayList<Tile> getSudoLegalTiles() {
     ArrayList<Tile> legalTiles;
 
     if (colour.equals("white")) {
@@ -35,7 +35,12 @@ public class Pawn extends Piece {
 
     addEnPassant(legalTiles);
 
-    return filterLegalTiles(legalTiles);
+    return legalTiles;
+  }
+
+  @Override
+  public ArrayList<Tile> getLegalTiles() {
+    return filterLegalTiles(getSudoLegalTiles());
   }
 
 

@@ -54,6 +54,7 @@ public abstract class Piece {
 
   public abstract ArrayList<Tile> getLegalTiles();
   public abstract ArrayList<Tile> getAttackTiles();
+  public abstract ArrayList<Tile> getSudoLegalTiles();
   public int value;
   protected Image blackImage;
 
