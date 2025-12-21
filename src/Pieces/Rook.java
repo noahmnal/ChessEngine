@@ -1,16 +1,14 @@
 package Pieces;
 
-import Models.Board;
 import Models.Tile;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Rook extends Piece {
-  public Rook(int x, int y, String color, Board board) {
-    super(x, y, color, board);
+  public Rook(int x, int y, String color) {
+    super(x, y, color);
     value = 5;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteRook.png"))

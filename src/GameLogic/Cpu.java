@@ -1,25 +1,22 @@
 package GameLogic;
 
 import Models.Board;
+import Models.GameLogic;
 import Pieces.Piece;
 import Models.Tile;
 
 import java.util.*;
 
 public class Cpu {
-  private final GamePanel gamePanel;
-  private final Board board;
   private int nodes;
 
-  public Cpu(Board board, GamePanel gamePanel) {
-    this.board = board;
-    this.gamePanel = gamePanel;
+  public Cpu() {
   }
 
   public void playMove() {
     System.out.println("Playing move");
     Move move = findBestMove();
-     board.makeMove(move, false);
+     Board.makeMove(move, false);
      System.out.println(nodes);
 
   }
@@ -32,12 +29,12 @@ public class Cpu {
       bestScore = Integer.MIN_VALUE;
     else
       bestScore = Integer.MAX_VALUE;
-    for (Piece piece : board.getColouredPieces(GamePanel.turn)) {
+    for (Piece piece : Board.getColouredPieces(GamePanel.turn)) {
       for (Tile tile : piece.getLegalTiles()) {
-        Move move = gamePanel.createMove(tile.getX(), tile.getY(), piece);
-        board.makeMove(move, true);
+        Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
+        Board.makeMove(move, true);
         int score = minimax(2, GamePanel.turn.equals("white"));
-        board.reverseMove(move, true);
+        Board.reverseMove(move, true);
         if (GamePanel.turn.equals("white")) {
           if (score > bestScore) {
             bestScore = score;
@@ -57,29 +54,29 @@ public class Cpu {
   public int minimax(int depth, boolean isWhiteTurn) {
     nodes++;
     if (depth == 0) {
-      return PositionRater.ratePosition(board.getPieces());
+      return PositionRater.ratePosition(Board.getPieces());
     }
     if (isWhiteTurn) {
       int higestScore = Integer.MIN_VALUE;
-    for (Piece piece : board.getColouredPieces("white")) {
+    for (Piece piece : Board.getColouredPieces("white")) {
       for (Tile tile : piece.getSudoLegalTiles()) {
         Move move = new Move(piece.getX(), piece.getY(), tile.getX(), tile.getY(),
-                piece, board.getPiece(tile.getX(), tile.getY()));
-        board.makeMove(move, true);
+                piece, Board.getPiece(tile.getX(), tile.getY()));
+        Board.makeMove(move, true);
         int score = minimax(depth - 1, false);
-        board.reverseMove(move, true);
+        Board.reverseMove(move, true);
         higestScore = Math.max(higestScore, score);
       }
     }
     return higestScore;
     } else {
       int lowestScore = Integer.MAX_VALUE;
-      for (Piece piece : board.getColouredPieces("black")) {
+      for (Piece piece : Board.getColouredPieces("black")) {
         for (Tile tile : piece.getSudoLegalTiles()) {
-          Move move = gamePanel.createMove(tile.getX(), tile.getY(), piece);
-          board.makeMove(move, true);
+          Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
+          Board.makeMove(move, true);
           int score = minimax(depth - 1, true);
-          board.reverseMove(move, true);
+          Board.reverseMove(move, true);
           lowestScore = Math.min(lowestScore, score);
         }
       }

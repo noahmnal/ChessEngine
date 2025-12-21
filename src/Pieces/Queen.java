@@ -11,8 +11,8 @@ import java.util.Objects;
 
 public class Queen extends Piece {
 
-  public Queen(int x, int y, String color, Board board) {
-    super(x, y, color, board);
+  public Queen(int x, int y, String color) {
+    super(x, y, color);
     value = 9;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteQueen.png"))

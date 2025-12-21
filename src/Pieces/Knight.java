@@ -11,8 +11,8 @@ import java.util.Objects;
 
 public class Knight extends Piece {
 
-  public Knight(int x, int y, String color, Board board) {
-    super(x,y,color, board);
+  public Knight(int x, int y, String color) {
+    super(x,y,color);
     value = 3;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteKnight.png"))

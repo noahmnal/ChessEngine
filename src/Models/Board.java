@@ -3,19 +3,17 @@ package Models;
 import Pieces.*;
 
 import java.util.ArrayList;
-import java.util.Objects;
-
 import GameLogic.GamePanel;
 import GameLogic.Move;
 import GameLogic.MovesHistory;
 
 public class Board {
   private static final ArrayList<Tile> tiles = new ArrayList<>();
-  public boolean whiteInCheck = false;
-  public boolean blackInCheck = false;
-  public Pawn enPassantPossible = null;
+  public static boolean whiteInCheck = false;
+  public static boolean blackInCheck = false;
+  public static Pawn enPassantPossible = null;
 
-  public void init() {
+  public static void init() {
     for (int i = 1; i < 9; i++) {
       for (int j = 1; j < 9; j++) {
         if ((i + j) % 2 == 1)
@@ -31,29 +29,29 @@ public class Board {
       switch (y) {
 
         // White pawns
-        case 2 -> tile.setPiece(new Pawn(x, y, "white", this));
+        case 2 -> tile.setPiece(new Pawn(x, y, "white"));
 
         // Black pawns
-        case 7 -> tile.setPiece(new Pawn(x, y, "black", this));
+        case 7 -> tile.setPiece(new Pawn(x, y, "black"));
 
         // White back rank
         case 1 -> {
           switch (x) {
-            case 1, 8 -> tile.setPiece(new Rook(x, y, "white", this));
-            case 2, 7 -> tile.setPiece(new Knight(x, y, "white", this));
-            case 3, 6 -> tile.setPiece(new Bishop(x, y, "white", this));
-            case 4 -> tile.setPiece(new Queen(x, y, "white", this));
-            case 5 -> tile.setPiece(new King(x, y, "white", this));
+            case 1, 8 -> tile.setPiece(new Rook(x, y, "white"));
+            case 2, 7 -> tile.setPiece(new Knight(x, y, "white"));
+            case 3, 6 -> tile.setPiece(new Bishop(x, y, "white"));
+            case 4 -> tile.setPiece(new Queen(x, y, "white"));
+            case 5 -> tile.setPiece(new King(x, y, "white"));
           }
         }
         //black Pieces
         case 8 -> {
           switch (x) {
-            case 1, 8 -> tile.setPiece(new Rook(x, y, "black", this));
-            case 2, 7 -> tile.setPiece(new Knight(x, y, "black", this));
-            case 3, 6 -> tile.setPiece(new Bishop(x, y, "black", this));
-            case 4 -> tile.setPiece(new Queen(x, y, "black", this));
-            case 5 -> tile.setPiece(new King(x, y, "black", this));
+            case 1, 8 -> tile.setPiece(new Rook(x, y, "black"));
+            case 2, 7 -> tile.setPiece(new Knight(x, y, "black"));
+            case 3, 6 -> tile.setPiece(new Bishop(x, y, "black"));
+            case 4 -> tile.setPiece(new Queen(x, y, "black"));
+            case 5 -> tile.setPiece(new King(x, y, "black"));
           }
         }
 
@@ -62,11 +60,11 @@ public class Board {
 
   }
 
-  public ArrayList<Tile> getTiles() {
+  public static ArrayList<Tile> getTiles() {
     return tiles;
   }
 
-  public void makeMove(Move move, boolean simulation) {
+  public static void makeMove(Move move, boolean simulation) {
     if (move.getPiece() instanceof Pawn pawn) {
       if (Math.abs(move.getFromY() - move.getToY()) == 2) {
         enPassantPossible = pawn;
@@ -98,7 +96,7 @@ public class Board {
     setChecksForKings();
   }
 
-  public  void reverseMove(Move move, boolean simulate) {
+  public static void reverseMove(Move move, boolean simulate) {
     if (move.isCastle()) {
       deletePieceFromTile(move.getCastlingRook());
       move.getCastlingRook().setX(move.getCastlingRook().getX() - move.getDirection());
@@ -125,7 +123,7 @@ public class Board {
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
-  public void deletePieceFromTile(int x, int y) {
+  public static void deletePieceFromTile(int x, int y) {
     for (Tile tile : tiles) {
       if (tile.getX() == x && tile.getY() == y) {
         tile.setPiece(null);
@@ -133,7 +131,7 @@ public class Board {
     }
   }
 
-  public void deletePieceFromTile(Piece piece) {
+  public static void deletePieceFromTile(Piece piece) {
     for (Tile tile : tiles) {
       if (tile.getPiece() == piece) {
         tile.setPiece(null);
@@ -143,7 +141,7 @@ public class Board {
 
 
 
-  private void movePieceToNewTIle(Piece piece) {
+  private static void movePieceToNewTIle(Piece piece) {
     for (Tile tile : tiles) {
       if (tile.getX() == piece.getX() && tile.getY() == piece.getY()) {
         tile.setPiece(piece);
@@ -162,7 +160,7 @@ public class Board {
     return tilesWithPieces;
   }
 
-  public ArrayList<Piece> getPieces() {
+  public static ArrayList<Piece> getPieces() {
     ArrayList<Piece> pieces = new ArrayList<>();
     for (Tile tile : tiles) {
       if (tile.getPiece() != null) {
@@ -172,7 +170,7 @@ public class Board {
     return pieces;
   }
 
-  public ArrayList<Piece> getColouredPieces(String colour) {
+  public static ArrayList<Piece> getColouredPieces(String colour) {
     ArrayList<Piece> pieces = new ArrayList<>();
     for (Tile tile : getTilesWithPieces()) {
       if (tile.getPiece().getColour().equals(colour)) {
@@ -182,7 +180,7 @@ public class Board {
     return pieces;
   }
 
-  public Rook getRookWithPos(String colour, int side) {
+  public static Rook getRookWithPos(String colour, int side) {
     for (Tile tile : getTilesWithPieces()) {
       if (tile.getPiece() instanceof Rook && tile.getPiece().getColour().equals(colour) && tile.getX() == side) {
         return (Rook) tile.getPiece();
@@ -191,7 +189,7 @@ public class Board {
     return null;
   }
 
-  private ArrayList<King> getKings() {
+  private static ArrayList<King> getKings() {
     ArrayList<King> kings = new ArrayList<>();
     for (Tile tile : getTilesWithPieces()) {
       if (tile.getPiece() instanceof King) {
@@ -201,14 +199,14 @@ public class Board {
     return kings;
   }
 
-  private void setInCheck(String colour, boolean value) {
+  private static void setInCheck(String colour, boolean value) {
     if (colour.equals("white"))
       whiteInCheck = value;
     else
       blackInCheck = value;
   }
 
-  public ArrayList<Tile> getAllAttackedTiles(String colour) {
+  public static ArrayList<Tile> getAllAttackedTiles(String colour) {
     ArrayList<Tile> attackedTiles = new ArrayList<>();
     for (Tile tile : getTilesWithPieces()) {
       if (tile.getPiece().getColour().equals(colour)) {
@@ -220,7 +218,7 @@ public class Board {
     return attackedTiles;
   }
 
-  public Pawn lookForPromotion(Piece piece) {
+  public static Pawn lookForPromotion(Piece piece) {
       if (piece instanceof Pawn pawn) {
         boolean promote =
                 (pawn.getColour().equals("white") && pawn.getY() == 7) ||
@@ -232,8 +230,8 @@ public class Board {
     return null;
   }
 
-  private void promotion(Pawn pawn) {
-      Queen queen = new Queen(pawn.getX(), pawn.getY(), pawn.getColour(), this);
+  private  static void promotion(Pawn pawn) {
+      Queen queen = new Queen(pawn.getX(), pawn.getY(), pawn.getColour());
       getTile(pawn.getX(), pawn.getY()).setPiece(queen);
   }
 
@@ -248,7 +246,7 @@ public class Board {
   }
 
 
-  public void setChecksForKings() {
+  public static void setChecksForKings() {
     Tile myTile;
     String colour;
     for (King king : getKings()) {
@@ -267,7 +265,7 @@ public class Board {
     }
   }
 
-  public void undoMove() {
+  public static void undoMove() {
     Move lastMove = null;
     if (MovesHistory.getMoves() != null)
        lastMove = MovesHistory.getMoves().getLast();
@@ -293,7 +291,7 @@ public class Board {
 
 
 
-  public boolean simulateIsMoveLegal(Piece piece, Tile targetTile) {
+  public static boolean simulateIsMoveLegal(Piece piece, Tile targetTile) {
 
       int oldX = piece.getX();
       int oldY = piece.getY();
@@ -323,7 +321,7 @@ public class Board {
       return !illegal;
   }
 
-  public Piece getPiece(int x, int y) {
+  public static Piece getPiece(int x, int y) {
     for (Piece piece : getPieces()) {
       if (piece.getX() == x && piece.getY() == y) {
         return piece;

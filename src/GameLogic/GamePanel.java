@@ -5,8 +5,6 @@ import Models.GameLogic;
 import Pieces.Piece;
 import Models.Tile;
 import Pieces.King;
-import Pieces.Pawn;
-import Pieces.Rook;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +14,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   public boolean playCpu = false;
   private static final int screenLength = 800;
   private static final int screenHeight = 800;
-
-  private final Board board;
   private final GameLogic gameLogic;
   private Cpu cpu = null;
 
@@ -31,9 +27,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   private boolean holdingPiece = false;
 
 
-  public GamePanel(Board board, GameLogic gameLogic) throws InterruptedException {
-    this.board = board;
-    board.init();
+  public GamePanel(GameLogic gameLogic) throws InterruptedException {
+    Board.init();
     this.gameLogic = gameLogic;
     this.setPreferredSize(new Dimension(screenLength, screenHeight));
     this.setBackground(Color.BLACK);
@@ -51,7 +46,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
   }
   public void draw(Graphics g) {
-    for (Tile tile : board.getTiles()) {
+    for (Tile tile : Board.getTiles()) {
       if (tile.getColour().equals("black")) {
         g.setColor(Color.RED);
         g.fillRect((tile.getX() - 1) * tileSize, (tile.getY() - 1) * tileSize, screenLength, screenHeight);
@@ -66,7 +61,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         g.fillRect((tile.getX()-1) * tileSize, (tile.getY()-1) * tileSize, tileSize, tileSize);
       }
     }
-    for (Tile tile : board.getTiles()) {
+    for (Tile tile : Board.getTiles()) {
       if (tile.getPiece() != null) {
         if (tile.getPiece() instanceof King)
           if (((King) tile.getPiece()).getInCheck()) {
@@ -114,13 +109,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
       } else playCpu = false;
     }
     if (e.getKeyCode() == KeyEvent.VK_Z) {
-  board.undoMove();
+  Board.undoMove();
   repaint();
     }
   }
   public void initCpu() {
     if (cpu == null)
-      cpu = new Cpu(board, this);
+      cpu = new Cpu();
   }
 
   @Override
@@ -157,8 +152,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
       if (turn.equals(currentPieceMoving.getColour())) {
         Tile chosenTile = new Tile(tileX, tileY);
         if(currentPieceMoving.getLegalTiles().contains(chosenTile)) {
-          Move move = createMove(tileX, tileY, currentPieceMoving);
-          board.makeMove(move, false);
+          Move move = GameLogic.createMove(tileX, tileY, currentPieceMoving);
+          Board.makeMove(move, false);
           repaint();
           if(playCpu && turn.equals("black"))
             cpu.playMove();
@@ -169,38 +164,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
 
   repaint();
-  }
-
-  public Move createMove(int x, int y, Piece piece) {
-    Tile chosenTile = new Tile(x, y);
-    if (piece instanceof Pawn pawn &&
-            pawn.enPassantPawn) {
-      int sign = pawn.getColour().equals("white") ? 1 : -1;
-      pawn.enPassantPawn = false;
-      return new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null);
-    } else if (board.lookForPromotion(piece)  != null) {
-      return new Move(piece.getX(), piece.getY(), x, y, piece,
-              false, 0, null, board.lookForPromotion(piece));
-    }
-    else if(piece instanceof King) {
-      try {
-        if (((King) piece).getCastlingTiles().containsKey(chosenTile)) {
-          Rook chosenRook = ((King) piece).getCastlingTiles().get(chosenTile);
-          if (chosenRook.getX() == 8) {
-            return new Move(piece.getX(),
-                    piece.getY(), x, y, piece, false,
-                    -2, chosenRook, null);
-          }
-          else {
-            return new Move(piece.getX(), piece.getY(),
-                    x, y, piece, false, 3, chosenRook, null);
-          }
-        }
-      } catch (NullPointerException _) {
-      }
-    }
-      Piece capturedPiece = Board.getCapturedPiece(x, y, piece, false, 0);
-      return new Move(piece.getX(), piece.getY(), x, y, piece, capturedPiece);
   }
 
   @Override

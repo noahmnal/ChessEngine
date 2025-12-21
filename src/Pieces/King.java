@@ -12,8 +12,8 @@ public class King extends Piece {
   private final HashMap<Tile, Rook> castlingTile;
   public boolean inCheck = false;
 
-  public King(int x, int y, String color,  Board board) {
-    super(x,y,color, board);
+  public King(int x, int y, String color) {
+    super(x,y,color);
     value = 1000;
      castlingTile = new HashMap<>();
     this.whiteImage = new ImageIcon(
@@ -60,8 +60,8 @@ public class King extends Piece {
 
   public void castleIfPossible(ArrayList<Tile> legalTiles) {
     if (!haveMoved) {
-      Rook kingRook = board.getRookWithPos(colour, 8);
-      Rook queenRook = board.getRookWithPos(colour, 1);
+      Rook kingRook = Board.getRookWithPos(colour, 8);
+      Rook queenRook = Board.getRookWithPos(colour, 1);
       if (kingRook != null) {
         if (kingRook.getHaveNotMoved()) {
           ArrayList<Tile> castlingKing = findTilesStraightLine(1, x, true);

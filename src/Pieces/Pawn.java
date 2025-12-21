@@ -11,8 +11,8 @@ import java.util.Objects;
 public class Pawn extends Piece {
   public boolean enPassantPawn = false;
 
-  public Pawn(int x, int y, String color, Board board) {
-    super(x, y, color, board);
+  public Pawn(int x, int y, String color) {
+    super(x, y, color);
     value = 1;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whitePawn.png"))).getImage();
@@ -81,8 +81,8 @@ public class Pawn extends Piece {
   }
 
   private void addEnPassant(ArrayList<Tile> legalTiles) {
-    if (board.enPassantPossible == null) return;
-    Pawn p = board.enPassantPossible;
+    if (Board.enPassantPossible == null) return;
+    Pawn p = Board.enPassantPossible;
 
     if (p.getColour().equals(colour)) return;
 

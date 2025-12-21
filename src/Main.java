@@ -14,10 +14,9 @@ void main() throws InterruptedException {
     window.setTitle("Chess");
     window.setLocation(200, 0);
     window.setVisible(true);
-    Board board = new Board();
-    GameLogic gameLogic = new GameLogic(board);
+    GameLogic gameLogic = new GameLogic();
 
-    GamePanel game_window = new GamePanel(board,  gameLogic);
+    GamePanel game_window = new GamePanel(gameLogic);
     window.add(game_window);
     window.pack();
     game_window.requestFocus();
