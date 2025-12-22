@@ -33,14 +33,23 @@ public class GameLogic {
 
   public static Move createMove(int x, int y, Piece piece) {
     Tile chosenTile = new Tile(x, y);
-    if (piece instanceof Pawn pawn &&
-            pawn.enPassantPawn) {
-      int sign = pawn.getColour().equals("white") ? 1 : -1;
-      pawn.enPassantPawn = false;
-      return new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null, pawn);
-    } else if (Board.lookForPromotion(piece)  != null) {
-      return new Move(piece.getX(), piece.getY(), x, y, piece,
-              false, 0, null, Board.lookForPromotion(piece), null);
+    if (piece instanceof Pawn pawn) {
+      if (y == 1 || y == 8) {
+        return new Move(piece.getX(), piece.getY(), x, y, piece, Board.getPiece(x, y), false, 0, null, pawn, null);
+      }
+      if (Math.abs(pawn.getY()-y) == 2) {
+        Piece capturedPiece = Board.getCapturedPiece(x, y, piece.getColour(), false, 0);
+        return new Move(pawn.getX(), pawn.getY(), x, y, piece,
+                capturedPiece, false, 0, null, null, pawn);
+      }
+
+      if (pawn.getEnPassantMove() != null && pawn.getEnPassantMove().getX() == x && pawn.getEnPassantMove().getY() == y) {
+        int sign = pawn.getColour().equals("white") ? 1 : -1;
+        pawn.enPassantPawn = false;
+        Piece capturedPiece = Board.getCapturedPiece(x, y, piece.getColour(), true, sign);
+        return new Move(piece.getX(), piece.getY(), x, y, piece,
+                capturedPiece, true, sign, null, null, (Pawn) capturedPiece);
+      }
     }
     else if (piece instanceof King king && !king.hasCastled) {
       try {
@@ -48,18 +57,18 @@ public class GameLogic {
           Rook chosenRook = king.getCastlingTiles().get(chosenTile);
           if (chosenRook.getX() == 8) {
             return new Move(piece.getX(),
-                    piece.getY(), x, y, piece, false,
+                    piece.getY(), x, y, piece, null, false,
                     -2, chosenRook, null, null);
           }
           else {
             return new Move(piece.getX(), piece.getY(),
-                    x, y, piece, false, 3, chosenRook, null, null);
+                    x, y, piece, null, false, 3, chosenRook, null, null);
           }
         }
       } catch (NullPointerException _) {
       }
     }
-    Piece capturedPiece = Board.getCapturedPiece(x, y, piece, false, 0);
+    Piece capturedPiece = Board.getCapturedPiece(x, y, piece.getColour(), false, 0);
     return new Move(piece.getX(), piece.getY(), x, y, piece, capturedPiece);
   }
 

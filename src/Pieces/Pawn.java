@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Pawn extends Piece {
+  Tile enPassantMove = null;
   public boolean enPassantPawn = false;
 
   public Pawn(int x, int y, String color) {
@@ -80,6 +81,10 @@ public class Pawn extends Piece {
     }
   }
 
+  public Tile getEnPassantMove() {
+    return enPassantMove;
+  }
+
   private void addEnPassant(ArrayList<Tile> legalTiles) {
     if (Board.enPassantPossible == null) return;
     Pawn p = Board.enPassantPossible;
@@ -91,7 +96,9 @@ public class Pawn extends Piece {
     if (Math.abs(p.getX() - this.x) != 1) return;
 
     int direction = colour.equals("white") ? 1 : -1;
-    legalTiles.add(new Tile(p.getX(), y + direction));
+    Tile enpassantTile = new Tile(p.getX(), y + direction);
+    legalTiles.add(enpassantTile);
+    enPassantMove = enpassantTile;
     enPassantPawn = true;
   }
 }

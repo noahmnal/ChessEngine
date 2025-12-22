@@ -1,6 +1,5 @@
 package GameLogic;
 
-import Models.Board;
 import Pieces.Pawn;
 import Pieces.Piece;
 import Pieces.Queen;
@@ -12,7 +11,7 @@ public class Move {
   private final int toX;
   private final int toY;
   private final Piece piece;
-  private Piece capturedPiece;
+  private final Piece capturedPiece;
   private final boolean enPassant;
   private int direction;
   private final boolean castle;
@@ -20,6 +19,7 @@ public class Move {
   private boolean firstMove = false;
   private Pawn promotion = null;
   private Pawn enPasantNextTurn = null;
+  private Queen promotedQueen;
 
   public Move(int fromX, int fromY, int toX, int toY, Piece piece, Piece capturedPiece) {
     this.fromX = fromX;
@@ -35,7 +35,7 @@ public class Move {
   }
 
   //special constructor for castling and passant
-  public Move(int fromX, int fromY, int toX, int toY, Piece piece, boolean enPassant,
+  public Move(int fromX, int fromY, int toX, int toY, Piece piece, Piece capturedPiece, boolean enPassant,
               int direction, Rook castlingRook, Pawn promotion, Pawn enPasantNextTurn) {
     this.fromX = fromX;
     this.fromY = fromY;
@@ -48,9 +48,7 @@ public class Move {
     this.castle = castlingRook != null;
     this.promotion = promotion;
     this.enPasantNextTurn = enPasantNextTurn;
-    setCapturedPiece();
-    if (enPassant)
-      updateCapturedPieceAfterEnPassant(direction);
+    this.capturedPiece = capturedPiece;
     if (piece.getHaveNotMoved())
       firstMove = true;
 
@@ -60,8 +58,12 @@ public class Move {
     return promotion != null;
   }
 
-  public Pawn getPromotionPiece() {
-    return promotion;
+  public void setPromotedQueen(Queen promotedQueen) {
+    this.promotedQueen = promotedQueen;
+  }
+
+  public Queen getPromotedQueen() {
+    return promotedQueen;
   }
 
   public Pawn getEnPasantNextTurn() {
@@ -72,19 +74,13 @@ public class Move {
     return piece;
   }
 
+  public boolean isEnPassant() {
+    return enPassant;
+  }
+
 
   public void setEnPasantNextTurn(Pawn enPasantNextTurn) {
     this.enPasantNextTurn = enPasantNextTurn;
-  }
-
-  public void setCapturedPiece() {
-    if (Board.getPiece(toX, toY) != null) {
-      if (!Board.getPiece(toX, toY).getColour().equals(piece.getColour())) {
-        this.capturedPiece = Board.getPiece(toX, toY);
-        return;
-      }
-    }
-    this.capturedPiece = null;
   }
 
   public boolean isCastle() {
@@ -107,10 +103,6 @@ public class Move {
     return castlingRook.getX() + direction;
   }
 
-  private void updateCapturedPieceAfterEnPassant(int sign) {
-    capturedPiece = Board.getPiece(toX, toY-sign);
-  }
-
   public Piece getCapturedPiece() {
     return capturedPiece;
   }
@@ -130,14 +122,6 @@ public class Move {
 
   public int getToY() {
     return toY;
-  }
-
-  public boolean isEnPassant() {
-    return enPassant;
-  }
-
-  public boolean getEnPassant() {
-    return enPassant;
   }
 
   @Override

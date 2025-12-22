@@ -12,7 +12,7 @@ public class Board {
   public static boolean whiteInCheck = false;
   public static boolean blackInCheck = false;
   public static Pawn enPassantPossible = null;
-  private static ArrayList<Piece> pieces = new ArrayList<>();
+  private static final ArrayList<Piece> pieces = new ArrayList<>();
 
   public static void init() {
     for (int i = 1; i < 9; i++) {
@@ -71,16 +71,6 @@ public class Board {
   }
 
   public static void makeMove(Move move, boolean simulation) {
-    if (move.getPiece() instanceof Pawn pawn) {
-      if (Math.abs(move.getFromY() - move.getToY()) == 2) {
-        enPassantPossible = pawn;
-        move.setEnPasantNextTurn(enPassantPossible);
-      } else {
-        enPassantPossible = null;
-      }
-    } else {
-      enPassantPossible = null;
-    }
     if (move.isCastle()) {
       move.getCastlingRook().setX(move.getRookNewPosition());
       if (move.getPiece() instanceof King king) {
@@ -89,19 +79,32 @@ public class Board {
     }
     move.getPiece().setX(move.getToX());
     move.getPiece().setY(move.getToY());
-    if (move.getEnPassant()) {
-      pieces.remove(getPiece(move.getToX(), move.getToY() - move.getDirection()));
+
+    if (move.isPromotion()) {
+      Queen promotedQueen = new Queen(move.getToX(), move.getToY(), move.getPiece().getColour());
+      move.setPromotedQueen(promotedQueen);
+      pieces.remove(move.getPiece());
     }
-    if (move.isPromotion())
-      promotion(move.getPromotionPiece());
-    if (!simulation) {
-      MovesHistory.addMove(move);
-      move.getPiece().setHaveMoved(true);
-    }
-    GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
-    setChecksForKings();
     if (move.getCapturedPiece() != null) {
       pieces.remove(move.getCapturedPiece());
+    }
+    MovesHistory.addMove(move);
+
+    if (!simulation) {
+      move.getPiece().setHaveMoved(true);
+      setChecksForKings();
+    }
+    GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
+
+    if (move.getPiece() instanceof Pawn pawn && !move.isEnPassant()) {
+      if (Math.abs(move.getFromY() - move.getToY()) == 2) {
+        enPassantPossible = pawn;
+        move.setEnPasantNextTurn(enPassantPossible);
+      } else {
+        enPassantPossible = null;
+      }
+    } else {
+      enPassantPossible = null;
     }
   }
 
@@ -112,10 +115,10 @@ public class Board {
         king.setHasCastled(false);
       }
     }
-
-    if (move.getEnPasantNextTurn() != null) {
-      enPassantPossible = move.getEnPasantNextTurn();
-    } else enPassantPossible = null;
+    if  (move.isPromotion()) {
+      pieces.remove(move.getPromotedQueen());
+      pieces.add(move.getPiece());
+    }
 
     if (move.getCapturedPiece() != null) {
       pieces.add(move.getCapturedPiece());
@@ -123,22 +126,19 @@ public class Board {
 
     move.getPiece().setX(move.getFromX());
     move.getPiece().setY(move.getFromY());
+    enPassantPossible = move.getEnPasantNextTurn();
 
+
+    MovesHistory.removeLast();
     if (!simulate) {
-      MovesHistory.removeLast();
       if (move.isFirstMove())
         move.getPiece().setHaveMoved(false);
     }
+    if (move.isEnPassant()) {
 
-    GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
-  }
 
-  public static ArrayList<Tile> getTilesWithPieces() {
-    ArrayList<Tile> tilesWithPieces = new ArrayList<>();
-    for (Piece piece : pieces) {
-        tilesWithPieces.add(piece.getTile());
     }
-    return tilesWithPieces;
+    GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
   public static ArrayList<Piece> getPieces() {
@@ -193,41 +193,21 @@ public class Board {
     return attackedTiles;
   }
 
-  public static Pawn lookForPromotion(Piece piece) {
-      if (piece instanceof Pawn pawn) {
-        boolean promote =
-                (pawn.getColour().equals("white") && pawn.getY() == 7) ||
-                        (pawn.getColour().equals("black") && pawn.getY() == 2);
-        if (promote)
-          return pawn;
-
-      }
-    return null;
-  }
-
-  private  static void promotion(Pawn pawn) {
-    new Queen(pawn.getX(), pawn.getY(), pawn.getColour());
-  }
-
 
   public static void setChecksForKings() {
-    Tile myTile;
-    String colour;
     for (King king : getKings()) {
-        myTile = new Tile(king.getX(), king.getY());
-        if (GamePanel.turn.equals("white"))
-          colour = "black";
-        else colour = "white";
-        if (getAllAttackedTiles(colour).contains(myTile)) {
-          setInCheck(king.getColour(), true);
-          king.inCheck = true;
-        }
-        else  {
-          setInCheck(king.getColour(), false);
-          king.inCheck = false;
-        }
+      String enemyColour =
+              king.getColour().equals("white") ? "black" : "white";
+
+      boolean inCheck =
+              getAllAttackedTiles(enemyColour)
+                      .contains(new Tile(king.getX(), king.getY()));
+
+      setInCheck(king.getColour(), inCheck);
+      king.inCheck = inCheck;
     }
   }
+
 
   public static void undoMove() {
     Move lastMove = null;
@@ -237,11 +217,11 @@ public class Board {
     reverseMove(lastMove, false);
   }
 
-  public static Piece getCapturedPiece(int x, int y, Piece piece, boolean enPassant, int sign) {
+  public static Piece getCapturedPiece(int x, int y, String colour, boolean enPassant, int sign) {
     Piece capturedPiece;
     if (!enPassant) {
       if (getPiece(x, y) != null) {
-        if (!Board.getPiece(x, y).getColour().equals(piece.getColour())) {
+        if (!Board.getPiece(x, y).getColour().equals(colour)) {
           capturedPiece = Board.getPiece(x, y);
           return capturedPiece;
         }

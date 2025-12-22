@@ -51,7 +51,6 @@ public abstract class Piece {
   protected String colour;
   protected Image whiteImage;
 
-
   public abstract ArrayList<Tile> getLegalTiles();
   public abstract ArrayList<Tile> getAttackTiles();
   public abstract ArrayList<Tile> getSudoLegalTiles();
@@ -92,16 +91,15 @@ public abstract class Piece {
   }
 
   protected boolean checkIfOwnColour(ArrayList<Tile> tiles, Tile tile) {
-    ArrayList<Tile> tilesWithPieces = Board.getTilesWithPieces();
-    if (tilesWithPieces.contains(tile)) {
-      Piece piece = Board.getPiece(tile.getX(), tile.getY());
-      if (!piece.getColour().equals(colour)) {
-        tiles.add(tile);
-      }
-      return true;
+    Piece piece = Board.getPiece(tile.getX(), tile.getY());
+    if (piece == null) {
+      tiles.add(tile);
+      return false;
     }
-    tiles.add(tile);
-    return false;
+    if (!piece.getColour().equals(colour)) {
+      tiles.add(tile);
+    }
+    return true;
   }
 
   protected ArrayList<Tile> getAllStraightTiles() {

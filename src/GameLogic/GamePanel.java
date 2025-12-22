@@ -126,6 +126,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
   @Override
   public void mousePressed(MouseEvent e) {
+    if (Board.enPassantPossible != null)
+      System.out.println(Board.enPassantPossible.getTile());
     mouseX = e.getX();
     mouseY = e.getY();
     currentPieceMoving = gameLogic.getMouseLocationPiece(mouseX, mouseY);

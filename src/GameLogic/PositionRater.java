@@ -15,15 +15,15 @@ public class PositionRater {
     for (Piece piece : pieces) {
       if (piece.getColour().equals("white")) {
         whitePieceValue += piece.value;
-        whitePieceValue += piece.getSudoLegalTiles().size();
+        whitePieceValue += piece.getAttackTiles().size();
         if (piece instanceof King king && king.hasCastled) {
-          whitePieceValue += 200;
+          whitePieceValue += 80;
         }
       } else {
         blackPieceValue += piece.value;
-        blackPieceValue += piece.getSudoLegalTiles().size();
+        blackPieceValue += piece.getAttackTiles().size();
         if (piece instanceof King king && king.hasCastled) {
-          blackPieceValue += 2000;
+          blackPieceValue += 80;
         }
       }
     }
