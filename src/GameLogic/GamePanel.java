@@ -16,6 +16,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   private static final int screenHeight = 800;
   private final GameLogic gameLogic;
   private Cpu cpu = null;
+  private String cpuColour;
 
 
   public static final int tileSize = screenLength / 8;
@@ -111,8 +112,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     }
   }
   public void initCpu() {
-    if (cpu == null)
+    if (cpu == null) {
+      cpuColour = GameLogic.switchTurn(turn);
       cpu = new Cpu();
+    }
   }
 
   @Override
@@ -154,7 +157,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
           Move move = GameLogic.createMove(tileX, tileY, currentPieceMoving);
           Board.makeMove(move, false);
           repaint();
-          if(playCpu && turn.equals("black"))
+          if(playCpu && turn.equals(cpuColour))
             cpu.playMove();
         }
       }

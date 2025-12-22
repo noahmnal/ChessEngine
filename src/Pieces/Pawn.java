@@ -2,7 +2,6 @@ package Pieces;
 
 import Models.Board;
 import Models.Tile;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
