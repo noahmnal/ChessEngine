@@ -10,7 +10,6 @@ public class Tile {
   private final int y;
   private final int x;
   private String color;
-  private Piece piece;
 
   public Rectangle getHitbox() {
     return hitbox;
@@ -22,7 +21,6 @@ public class Tile {
     this.x = x;
     this.y = y;
     this.color = color;
-    this.piece = piece;
     this.hitbox = new Rectangle((x-1)*GamePanel.tileSize, (y-1)*GamePanel.tileSize, GamePanel.tileSize,  GamePanel.tileSize);
 
   }
@@ -45,13 +43,6 @@ public class Tile {
   }
 
 
-  public Piece getPiece() {
-    return piece;
-  }
-
-  public void setPiece(Piece piece) {
-    this.piece = piece;
-  }
 
   @Override
   public boolean equals(Object o) {

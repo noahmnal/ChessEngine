@@ -82,19 +82,14 @@ public class Board {
       enPassantPossible = null;
     }
     if (move.isCastle()) {
-      deletePieceFromTile(move.getCastlingRook());
       move.getCastlingRook().setX(move.getRookNewPosition());
-      movePieceToNewTIle(move.getCastlingRook());
       if (move.getPiece() instanceof King king) {
         king.setHasCastled(true);
       }
     }
-    deletePieceFromTile(move.getPiece());
     move.getPiece().setX(move.getToX());
     move.getPiece().setY(move.getToY());
-    movePieceToNewTIle(move.getPiece());
     if (move.getEnPassant()) {
-      deletePieceFromTile(move.getToX(), move.getToY() - move.getDirection());
       pieces.remove(getPiece(move.getToX(), move.getToY() - move.getDirection()));
     }
     if (move.isPromotion())
@@ -112,15 +107,10 @@ public class Board {
 
   public static void reverseMove(Move move, boolean simulate) {
     if (move.isCastle()) {
-      deletePieceFromTile(move.getCastlingRook());
       move.getCastlingRook().setX(move.getCastlingRook().getX() - move.getDirection());
-      movePieceToNewTIle(move.getCastlingRook());
       if (move.getPiece() instanceof King king) {
         king.setHasCastled(false);
       }
-    }
-    if (move.isPromotion()) {
-      deletePieceFromTile(move.getToX(), move.getToY());
     }
 
     if (move.getEnPasantNextTurn() != null) {
@@ -128,14 +118,11 @@ public class Board {
     } else enPassantPossible = null;
 
     if (move.getCapturedPiece() != null) {
-      getTile(move.getCapturedPiece().getX(), move.getCapturedPiece().getY()).setPiece(move.getCapturedPiece());
       pieces.add(move.getCapturedPiece());
     }
 
-    deletePieceFromTile(move.getPiece());
     move.getPiece().setX(move.getFromX());
     move.getPiece().setY(move.getFromY());
-    movePieceToNewTIle(move.getPiece());
 
     if (!simulate) {
       MovesHistory.removeLast();
@@ -144,33 +131,6 @@ public class Board {
     }
 
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
-  }
-
-  public static void deletePieceFromTile(int x, int y) {
-    for (Tile tile : tiles) {
-      if (tile.getX() == x && tile.getY() == y) {
-        tile.setPiece(null);
-      }
-    }
-  }
-
-  public static void deletePieceFromTile(Piece piece) {
-    for (Tile tile : tiles) {
-      if (tile.getPiece() == piece) {
-        tile.setPiece(null);
-      }
-    }
-  }
-
-
-
-  private static void movePieceToNewTIle(Piece piece) {
-    for (Tile tile : tiles) {
-      if (tile.getX() == piece.getX() && tile.getY() == piece.getY()) {
-        tile.setPiece(piece);
-        break;
-      }
-    }
   }
 
   public static ArrayList<Tile> getTilesWithPieces() {
@@ -246,18 +206,7 @@ public class Board {
   }
 
   private  static void promotion(Pawn pawn) {
-      Queen queen = new Queen(pawn.getX(), pawn.getY(), pawn.getColour());
-      getTile(pawn.getX(), pawn.getY()).setPiece(queen);
-  }
-
-
-  public static Tile getTile(int x, int y) {
-    for (Tile tile : tiles) {
-      if (tile.getX() == x && tile.getY() == y) {
-        return tile;
-      }
-    }
-    return null;
+    new Queen(pawn.getX(), pawn.getY(), pawn.getColour());
   }
 
 
