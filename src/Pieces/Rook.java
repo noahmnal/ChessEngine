@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Rook extends Piece {
   public Rook(int x, int y, String color) {
     super(x, y, color);
-    value = 5;
+    value = 500;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteRook.png"))
     ).getImage();

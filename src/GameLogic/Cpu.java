@@ -18,6 +18,7 @@ public class Cpu {
     Move move = findBestMove();
      Board.makeMove(move, false);
      System.out.println(nodes);
+     System.out.println(move);
 
   }
 
@@ -33,7 +34,7 @@ public class Cpu {
       for (Tile tile : piece.getLegalTiles()) {
         Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
         Board.makeMove(move, true);
-        int score = minimax(2, GamePanel.turn.equals("white"));
+        int score = minimax(2, GamePanel.turn.equals("white"), -100000, 100000);
         Board.reverseMove(move, true);
         if (GamePanel.turn.equals("white")) {
           if (score > bestScore) {
@@ -51,7 +52,7 @@ public class Cpu {
     return bestMove;
   }
 
-  public int minimax(int depth, boolean isWhiteTurn) {
+  public int minimax(int depth, boolean isWhiteTurn, int alpha, int beta) {
     nodes++;
     if (depth == 0) {
       return PositionRater.ratePosition(Board.getPieces());
@@ -60,13 +61,17 @@ public class Cpu {
       int higestScore = Integer.MIN_VALUE;
     for (Piece piece : Board.getColouredPieces("white")) {
       for (Tile tile : piece.getSudoLegalTiles()) {
-        Move move = new Move(piece.getX(), piece.getY(), tile.getX(), tile.getY(),
-                piece, Board.getPiece(tile.getX(), tile.getY()));
+        Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
         Board.makeMove(move, true);
-        int score = minimax(depth - 1, false);
+        int score = minimax(depth - 1, false,  alpha, beta);
         Board.reverseMove(move, true);
         higestScore = Math.max(higestScore, score);
-      }
+        alpha = Math.max(alpha, higestScore);
+        if (beta <= alpha) {
+          //return higestScore;
+        }
+
+        }
     }
     return higestScore;
     } else {
@@ -74,10 +79,14 @@ public class Cpu {
       for (Piece piece : Board.getColouredPieces("black")) {
         for (Tile tile : piece.getSudoLegalTiles()) {
           Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
-          Board.makeMove(move, true);
-          int score = minimax(depth - 1, true);
-          Board.reverseMove(move, true);
+          Board.makeMove(move, false);
+          int score = minimax(depth - 1, true, alpha, beta);
+          Board.reverseMove(move, false);
           lowestScore = Math.min(lowestScore, score);
+          beta = Math.min(beta, score);
+          if (beta <= alpha) {
+            //return lowestScore;
+          }
         }
       }
       return lowestScore;

@@ -11,10 +11,11 @@ import java.util.Objects;
 public class King extends Piece {
   private final HashMap<Tile, Rook> castlingTile;
   public boolean inCheck = false;
+  public boolean hasCastled = false;
 
   public King(int x, int y, String color) {
     super(x,y,color);
-    value = 1000;
+    value = 1000000;
      castlingTile = new HashMap<>();
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteKing.png"))
@@ -41,6 +42,10 @@ public class King extends Piece {
     return inCheck;
   }
 
+  public void setHasCastled(boolean hasCastled) {
+    this.hasCastled = hasCastled;
+  }
+
   @Override
   public ArrayList<Tile> getAttackTiles() {
     ArrayList<Tile> attackTiles = new ArrayList<>();
@@ -59,6 +64,10 @@ public class King extends Piece {
   }
 
   public void castleIfPossible(ArrayList<Tile> legalTiles) {
+    if (hasCastled) {
+      castlingTile.clear();
+      return;
+    }
     if (!haveMoved) {
       Rook kingRook = Board.getRookWithPos(colour, 8);
       Rook queenRook = Board.getRookWithPos(colour, 1);

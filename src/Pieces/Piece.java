@@ -63,11 +63,19 @@ public abstract class Piece {
     this.x = x;
     this.y = y;
     this.colour = colour;
+    Board.addNewPiece(this);
+  }
 
+  public Tile getTile() {
+  return new Tile(x, y);
   }
 
   public boolean checkForPiecesBlocking(Tile legalTile) {
-    return Board.getTilesWithPieces().contains(legalTile);
+    for (Piece piece : Board.getPieces()) {
+      if (piece.getTile().equals(legalTile))
+        return true;
+    }
+    return false;
   }
 
   protected ArrayList<Tile> findTilesStraightLine(int sign, int pos, boolean isX) {
@@ -84,9 +92,10 @@ public abstract class Piece {
   }
 
   protected boolean checkIfOwnColour(ArrayList<Tile> tiles, Tile tile) {
-    if (Board.getTilesWithPieces().contains(tile)) {
-      int index = Board.getTilesWithPieces().indexOf(tile);
-      if (!Board.getTilesWithPieces().get(index).getPiece().getColour().equals(colour)) {
+    ArrayList<Tile> tilesWithPieces = Board.getTilesWithPieces();
+    if (tilesWithPieces.contains(tile)) {
+      Piece piece = Board.getPiece(tile.getX(), tile.getY());
+      if (!piece.getColour().equals(colour)) {
         tiles.add(tile);
       }
       return true;

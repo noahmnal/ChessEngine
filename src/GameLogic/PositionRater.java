@@ -1,6 +1,6 @@
 package GameLogic;
 
-import Models.Board;
+import Pieces.King;
 import Pieces.Piece;
 
 import java.util.ArrayList;
@@ -13,13 +13,22 @@ public class PositionRater {
     int rating;
 
     for (Piece piece : pieces) {
-      if (piece.getColour().equals("white"))
+      if (piece.getColour().equals("white")) {
         whitePieceValue += piece.value;
-      else blackPieceValue += piece.value;
+        whitePieceValue += piece.getSudoLegalTiles().size();
+        if (piece instanceof King king && king.hasCastled) {
+          whitePieceValue += 200;
+        }
+      } else {
+        blackPieceValue += piece.value;
+        blackPieceValue += piece.getSudoLegalTiles().size();
+        if (piece instanceof King king && king.hasCastled) {
+          blackPieceValue += 2000;
+        }
+      }
     }
     rating = whitePieceValue - blackPieceValue;
     return rating;
-
 
   }
 }

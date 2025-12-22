@@ -61,35 +61,32 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         g.fillRect((tile.getX()-1) * tileSize, (tile.getY()-1) * tileSize, tileSize, tileSize);
       }
     }
-    for (Tile tile : Board.getTiles()) {
-      if (tile.getPiece() != null) {
-        if (tile.getPiece() instanceof King)
-          if (((King) tile.getPiece()).getInCheck()) {
+    for (Piece piece : Board.getPieces()) {
+        if (piece instanceof King king)
+          if (king.getInCheck()) {
             g.setColor(Color.BLUE);
-            g.fillRect((tile.getX()-1)*tileSize, (tile.getY()-1)*tileSize, tileSize, tileSize);
+            g.fillRect((king.getX()-1)*tileSize, (king.getY()-1)*tileSize, tileSize, tileSize);
           }
-        if (tile.getPiece().getColour().equals("white")) {
+        if (piece.getColour().equals("white")) {
           g.drawImage(
-                  tile.getPiece().getWhiteImage(),
-                  (tile.getPiece().getX() - 1) * tileSize,
-                  (tile.getPiece().getY() - 1) * tileSize,
+                  piece.getWhiteImage(),
+                  (piece.getX() - 1) * tileSize,
+                  (piece.getY() - 1) * tileSize,
                   tileSize,
                   tileSize,
                   null
           );
         } else
           g.drawImage(
-                  tile.getPiece().getBlackImage(),
-                  (tile.getPiece().getX() - 1) * tileSize,
-                  (tile.getPiece().getY() - 1) * tileSize,
+                  piece.getBlackImage(),
+                  (piece.getX() - 1) * tileSize,
+                  (piece.getY() - 1) * tileSize,
                   tileSize,
                   tileSize,
                   null
           );
-
       }
     }
-  }
 
   @Override
   public void actionPerformed(ActionEvent e) {

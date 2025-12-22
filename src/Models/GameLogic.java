@@ -8,8 +8,8 @@ import GameLogic.Move;
 public class GameLogic {
   public Piece getMouseLocationPiece(int mouseX, int mouseY){
     for (Tile tile : Board.getTiles()) {
-      if (tile.getHitbox().contains(mouseX, mouseY) && tile.getPiece() != null) {
-        return tile.getPiece();
+      if (tile.getHitbox().contains(mouseX, mouseY) && Board.getPiece(tile.getX(), tile.getY())  != null) {
+        return Board.getPiece(tile.getX(), tile.getY());
       }
     }
     return null;
@@ -37,23 +37,23 @@ public class GameLogic {
             pawn.enPassantPawn) {
       int sign = pawn.getColour().equals("white") ? 1 : -1;
       pawn.enPassantPawn = false;
-      return new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null);
+      return new Move(piece.getX(), piece.getY(), x, y, piece, true, sign, null, null, pawn);
     } else if (Board.lookForPromotion(piece)  != null) {
       return new Move(piece.getX(), piece.getY(), x, y, piece,
-              false, 0, null, Board.lookForPromotion(piece));
+              false, 0, null, Board.lookForPromotion(piece), null);
     }
-    else if(piece instanceof King) {
+    else if (piece instanceof King king && !king.hasCastled) {
       try {
-        if (((King) piece).getCastlingTiles().containsKey(chosenTile)) {
-          Rook chosenRook = ((King) piece).getCastlingTiles().get(chosenTile);
+        if (king.getCastlingTiles().containsKey(chosenTile)) {
+          Rook chosenRook = king.getCastlingTiles().get(chosenTile);
           if (chosenRook.getX() == 8) {
             return new Move(piece.getX(),
                     piece.getY(), x, y, piece, false,
-                    -2, chosenRook, null);
+                    -2, chosenRook, null, null);
           }
           else {
             return new Move(piece.getX(), piece.getY(),
-                    x, y, piece, false, 3, chosenRook, null);
+                    x, y, piece, false, 3, chosenRook, null, null);
           }
         }
       } catch (NullPointerException _) {

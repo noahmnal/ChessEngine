@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Bishop extends Piece {
   public Bishop(int x, int y, String color)  {
     super(x,y,color);
-    value = 3;
+    value = 300;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteBishop.png"))
     ).getImage();

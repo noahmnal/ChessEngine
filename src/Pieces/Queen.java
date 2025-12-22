@@ -1,7 +1,5 @@
 package Pieces;
 
-import GameLogic.GamePanel;
-import Models.Board;
 import Models.Tile;
 
 import javax.swing.*;
@@ -13,7 +11,7 @@ public class Queen extends Piece {
 
   public Queen(int x, int y, String color) {
     super(x, y, color);
-    value = 9;
+    value = 900;
     this.whiteImage = new ImageIcon(
             Objects.requireNonNull(getClass().getResource("/Images/whiteQueen.png"))
     ).getImage();

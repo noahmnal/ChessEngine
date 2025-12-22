@@ -19,6 +19,7 @@ public class Move {
   private Rook castlingRook;
   private boolean firstMove = false;
   private Pawn promotion = null;
+  private Pawn enPasantNextTurn = null;
 
   public Move(int fromX, int fromY, int toX, int toY, Piece piece, Piece capturedPiece) {
     this.fromX = fromX;
@@ -34,7 +35,8 @@ public class Move {
   }
 
   //special constructor for castling and passant
-  public Move(int fromX, int fromY, int toX, int toY, Piece piece, boolean enPassant, int direction, Rook castlingRook, Pawn promotion) {
+  public Move(int fromX, int fromY, int toX, int toY, Piece piece, boolean enPassant,
+              int direction, Rook castlingRook, Pawn promotion, Pawn enPasantNextTurn) {
     this.fromX = fromX;
     this.fromY = fromY;
     this.toX = toX;
@@ -45,6 +47,7 @@ public class Move {
     this.castlingRook = castlingRook;
     this.castle = castlingRook != null;
     this.promotion = promotion;
+    this.enPasantNextTurn = enPasantNextTurn;
     setCapturedPiece();
     if (enPassant)
       updateCapturedPieceAfterEnPassant(direction);
@@ -61,16 +64,23 @@ public class Move {
     return promotion;
   }
 
+  public Pawn getEnPasantNextTurn() {
+    return enPasantNextTurn;
+  }
 
   public Piece getPiece() {
     return piece;
   }
 
 
+  public void setEnPasantNextTurn(Pawn enPasantNextTurn) {
+    this.enPasantNextTurn = enPasantNextTurn;
+  }
+
   public void setCapturedPiece() {
-    if (Board.getTile(toX, toY).getPiece() != null) {
-      if (!Board.getTile(toX, toY).getPiece().getColour().equals(piece.getColour())) {
-        this.capturedPiece = Board.getTile(toX, toY).getPiece();
+    if (Board.getPiece(toX, toY) != null) {
+      if (!Board.getPiece(toX, toY).getColour().equals(piece.getColour())) {
+        this.capturedPiece = Board.getPiece(toX, toY);
         return;
       }
     }
@@ -98,7 +108,7 @@ public class Move {
   }
 
   private void updateCapturedPieceAfterEnPassant(int sign) {
-    capturedPiece = Board.getTile(toX, toY-sign).getPiece();
+    capturedPiece = Board.getPiece(toX, toY-sign);
   }
 
   public Piece getCapturedPiece() {
