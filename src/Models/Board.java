@@ -95,17 +95,7 @@ public class Board {
       setChecksForKings();
     }
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
-
-    if (move.getPiece() instanceof Pawn pawn && !move.isEnPassant()) {
-      if (Math.abs(move.getFromY() - move.getToY()) == 2) {
-        enPassantPossible = pawn;
-        move.setEnPasantNextTurn(enPassantPossible);
-      } else {
-        enPassantPossible = null;
-      }
-    } else {
-      enPassantPossible = null;
-    }
+    enPassantPossible = move.getEnPasantNextTurn();
   }
 
   public static void reverseMove(Move move, boolean simulate) {
@@ -126,10 +116,11 @@ public class Board {
 
     move.getPiece().setX(move.getFromX());
     move.getPiece().setY(move.getFromY());
-    enPassantPossible = move.getEnPasantNextTurn();
+
+    assert MovesHistory.getMoves() != null;
+    enPassantPossible = MovesHistory.getMoves().getLast().getEnPasantNextTurn();
 
 
-    MovesHistory.removeLast();
     if (!simulate) {
       if (move.isFirstMove())
         move.getPiece().setHaveMoved(false);
@@ -138,6 +129,7 @@ public class Board {
 
 
     }
+    MovesHistory.removeLast();
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
@@ -236,8 +228,6 @@ public class Board {
 
 
   public static boolean simulateIsMoveLegal(Piece piece, Tile targetTile) {
-    Pawn saveEnPassant = enPassantPossible;
-
       Move move = GameLogic.createMove(targetTile.getX(), targetTile.getY(), piece);
       makeMove(move, true);
 
@@ -248,8 +238,6 @@ public class Board {
 
       reverseMove(move, true);
       setChecksForKings();
-      enPassantPossible = saveEnPassant;
-
       return !illegal;
   }
 
