@@ -1,5 +1,6 @@
 package GameLogic;
 
+import Models.Board;
 import Pieces.Pawn;
 import Pieces.Piece;
 import Pieces.Queen;
@@ -20,6 +21,7 @@ public class Move {
   private Pawn promotion = null;
   private Pawn enPasantNextTurn = null;
   private Queen promotedQueen;
+  private int fiftyMoveCounter;
 
   public Move(int fromX, int fromY, int toX, int toY, Piece piece, Piece capturedPiece) {
     this.fromX = fromX;
@@ -30,6 +32,7 @@ public class Move {
     this.capturedPiece = capturedPiece;
     enPassant = false;
     castle = false;
+    this.fiftyMoveCounter = Board.fiftyMoveCounter;
     if (piece.getHaveNotMoved())
       firstMove = true;
   }
@@ -56,6 +59,10 @@ public class Move {
 
   public boolean isPromotion() {
     return promotion != null;
+  }
+
+  public int getFiftyMoveCounter() {
+    return fiftyMoveCounter;
   }
 
   public void setPromotedQueen(Queen promotedQueen) {

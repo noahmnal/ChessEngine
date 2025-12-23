@@ -14,6 +14,7 @@ public class Board {
   private static final ArrayList<Piece> pieces = new ArrayList<>();
   private static final ArrayList<Move> whitePieces = new ArrayList<>();
   private static final ArrayList<Move> blackPieces = new ArrayList<>();
+  public static int fiftyMoveCounter = 0;
 
   public static void init() {
     for (int i = 1; i < 9; i++) {
@@ -72,6 +73,8 @@ public class Board {
   }
 
   public static void makeMove(Move move, boolean simulation) {
+    int saveFiftyMoveCounter = fiftyMoveCounter;
+    fiftyMoveCounter++;
     if (move.isCastle()) {
       move.getCastlingRook().setX(move.getRookNewPosition());
       if (move.getPiece() instanceof King king) {
@@ -87,16 +90,23 @@ public class Board {
       pieces.remove(move.getPiece());
     }
     if (move.getCapturedPiece() != null) {
+      fiftyMoveCounter = 0;
       pieces.remove(move.getCapturedPiece());
+    }
+    if (move.getPiece() instanceof Pawn) {
+      fiftyMoveCounter = 0;
     }
     MovesHistory.addMove(move);
     move.getPiece().setHaveMoved(true);
     if (!simulation)
       setChecksForKings();
+    else fiftyMoveCounter = saveFiftyMoveCounter;
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
-  public static void reverseMove(Move move) {
+  public static void reverseMove(Move move, boolean simulation) {
+    int saveFiftyMoveCounter = fiftyMoveCounter;
+    fiftyMoveCounter--;
     if (move.isCastle()) {
       move.getCastlingRook().setX(move.getCastlingRook().getX() - move.getDirection());
       if (move.getPiece() instanceof King king) {
@@ -109,7 +119,11 @@ public class Board {
     }
 
     if (move.getCapturedPiece() != null) {
+      fiftyMoveCounter = move.getFiftyMoveCounter();
       pieces.add(move.getCapturedPiece());
+    }
+    if (move.getPiece() instanceof Pawn) {
+      fiftyMoveCounter = move.getFiftyMoveCounter();
     }
 
     move.getPiece().setX(move.getFromX());
@@ -120,6 +134,8 @@ public class Board {
     if (move.isFirstMove())
       move.getPiece().setHaveMoved(false);
     MovesHistory.removeLast();
+    if (simulation)
+      fiftyMoveCounter = saveFiftyMoveCounter;
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
@@ -144,16 +160,16 @@ public class Board {
     return coloredPieces;
   }
 
-  public static Rook getRookWithPos(String colour, int side) {
+  public static Rook getRookWithPos(String colour, int xPos) {
     for (Piece piece : getPieces()) {
-      if (piece instanceof Rook rook && rook.getColour().equals(colour) && rook.getX() == side) {
+      if (piece instanceof Rook rook && rook.getColour().equals(colour) && rook.getX() == xPos) {
         return rook;
       }
     }
     return null;
   }
 
-  private static ArrayList<King> getKings() {
+  public static ArrayList<King> getKings() {
     ArrayList<King> kings = new ArrayList<>();
     for (Piece piece : getPieces()) {
       if (piece instanceof King king) {
@@ -205,7 +221,7 @@ public class Board {
     if (MovesHistory.getMoves() != null)
        lastMove = MovesHistory.getMoves().getLast();
     assert lastMove != null;
-    reverseMove(lastMove);
+    reverseMove(lastMove, false);
   }
 
   public static Piece getCapturedPiece(int x, int y, String colour, boolean enPassant, int sign) {
@@ -235,7 +251,7 @@ public class Board {
       boolean illegal =
               piece.getColour().equals("white") ? whiteInCheck : blackInCheck;
 
-      reverseMove(move);
+      reverseMove(move, true);
       setChecksForKings();
       return !illegal;
   }
@@ -248,5 +264,6 @@ public class Board {
     }
     return null;
   }
+
 
 }

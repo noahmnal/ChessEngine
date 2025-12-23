@@ -1,3 +1,4 @@
+import Cpu.OpeningBook;
 import GameLogic.GamePanel;
 import Models.GameLogic;
 
@@ -6,7 +7,7 @@ import javax.swing.JFrame;
 
 
 
-void main() throws InterruptedException {
+void main() throws InterruptedException, IOException {
     JFrame window = new JFrame();
     window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     window.setResizable(false);
@@ -14,6 +15,7 @@ void main() throws InterruptedException {
     window.setLocation(200, 0);
     window.setVisible(true);
     GameLogic gameLogic = new GameLogic();
+  OpeningBook openingBook = new OpeningBook();
 
     GamePanel game_window = new GamePanel(gameLogic);
     window.add(game_window);

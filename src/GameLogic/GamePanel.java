@@ -1,5 +1,6 @@
 package GameLogic;
 
+import Cpu.*;
 import Models.Board;
 import Models.GameLogic;
 import Pieces.Piece;
@@ -10,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import static Cpu.OpeningBook.buildWholeFen;
+
 public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
   public boolean playCpu = false;
   public static final int screenLength = 760;
@@ -19,7 +22,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
   private final GameLogic gameLogic;
   private Cpu cpu = null;
-  private String cpuColour;
+  public static String cpuColour;
 
   public static final int tileSize = screenLength / 8;
 
