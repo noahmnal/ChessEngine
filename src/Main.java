@@ -1,5 +1,4 @@
 import GameLogic.GamePanel;
-import Models.Board;
 import Models.GameLogic;
 
 import javax.swing.JFrame;

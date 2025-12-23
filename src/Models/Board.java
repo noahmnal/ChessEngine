@@ -12,6 +12,8 @@ public class Board {
   public static boolean whiteInCheck = false;
   public static boolean blackInCheck = false;
   private static final ArrayList<Piece> pieces = new ArrayList<>();
+  private static final ArrayList<Move> whitePieces = new ArrayList<>();
+  private static final ArrayList<Move> blackPieces = new ArrayList<>();
 
   public static void init() {
     for (int i = 1; i < 9; i++) {
@@ -123,6 +125,13 @@ public class Board {
 
   public static ArrayList<Piece> getPieces() {
     return pieces;
+  }
+
+  public static ArrayList<Move> getWhitePieces() {
+    return whitePieces;
+  }
+  public static ArrayList<Move> getBlackPieces() {
+    return blackPieces;
   }
 
   public static ArrayList<Piece> getColouredPieces(String colour) {
@@ -239,4 +248,5 @@ public class Board {
     }
     return null;
   }
+
 }

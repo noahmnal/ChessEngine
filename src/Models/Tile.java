@@ -21,13 +21,19 @@ public class Tile {
     this.x = x;
     this.y = y;
     this.color = color;
-    this.hitbox = new Rectangle((x-1)*GamePanel.tileSize, (y-1)*GamePanel.tileSize, GamePanel.tileSize,  GamePanel.tileSize);
-
+    setTileHitbox(GamePanel.flipScreen);
   }
 
   public Tile(int x, int y) {
     this.x = x;
     this.y = y;
+  }
+
+  public void setTileHitbox (boolean flipScreen) {
+    if (!flipScreen)
+      hitbox = new Rectangle((x-1)*GamePanel.tileSize, (y-1)*GamePanel.tileSize, GamePanel.tileSize,  GamePanel.tileSize);
+    else hitbox = new Rectangle((x-1)*GamePanel.tileSize, GamePanel.screenHeight-y*GamePanel.tileSize, GamePanel.tileSize,  GamePanel.tileSize);
+
   }
 
   public int getX() {

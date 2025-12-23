@@ -149,7 +149,7 @@ public abstract class Piece {
 
   @Override
   public String toString() {
-    return "Piece{" +
+    return getClass().getSimpleName() +
             ", colour='" + colour + '\'' +
             ", y=" + y +
             ", x=" + x +

@@ -12,26 +12,30 @@ import java.awt.event.*;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
   public boolean playCpu = false;
-  private static final int screenLength = 800;
-  private static final int screenHeight = 800;
+  public static final int screenLength = 760;
+  public static final int screenHeight = 760;
+  private static final int screenLengthAddOn = 50;
+  private static final int screenHeightAddOn = 50;
+
   private final GameLogic gameLogic;
   private Cpu cpu = null;
   private String cpuColour;
-
 
   public static final int tileSize = screenLength / 8;
 
   private int mouseX, mouseY;
   private Piece currentPieceMoving;
   public static String turn = "white";
+  private int currentPositionRating = 0;
 
-  private boolean holdingPiece = false;
+  private static boolean holdingPiece = false;
+  public static boolean flipScreen = true;
 
 
   public GamePanel(GameLogic gameLogic) throws InterruptedException {
     Board.init();
     this.gameLogic = gameLogic;
-    this.setPreferredSize(new Dimension(screenLength, screenHeight));
+    this.setPreferredSize(new Dimension(screenLength+screenLengthAddOn, screenHeight+screenHeightAddOn));
     this.setBackground(Color.BLACK);
     this.setDoubleBuffered(true);
     addKeyListener(this);
@@ -41,25 +45,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     SwingUtilities.invokeLater(this::repaint);
   }
 
+  public void flipScreen() {
+    flipScreen = !flipScreen;
+    for (Tile tile : Board.getTiles()) {
+      tile.setTileHitbox(flipScreen);
+    }
+    repaint();
+
+  }
+
   public void paintComponent(Graphics g){
     super.paintComponent(g);
     draw(g);
-
   }
   public void draw(Graphics g) {
     for (Tile tile : Board.getTiles()) {
       if (tile.getColour().equals("black")) {
         g.setColor(Color.RED);
-        g.fillRect((tile.getX() - 1) * tileSize, (tile.getY() - 1) * tileSize, screenLength, screenHeight);
+        g.fillRect((tile.getX() - 1) * tileSize, screenHeight-(tile.getY() * tileSize), tileSize, tileSize);
       } else {
         g.setColor(Color.WHITE);
-        g.fillRect((tile.getX() - 1) * tileSize, (tile.getY() - 1) * tileSize, tileSize, tileSize);
+        g.fillRect((tile.getX() - 1) * tileSize, screenHeight-(tile.getY() * tileSize), tileSize, tileSize);
       }
     }
     if (holdingPiece) {
       for (Tile tile : currentPieceMoving.getLegalTiles()){
         g.setColor(Color.GREEN);
-        g.fillRect((tile.getX()-1) * tileSize, (tile.getY()-1) * tileSize, tileSize, tileSize);
+        if (flipScreen)
+          g.fillRect((tile.getX()-1) * tileSize, (8-tile.getY()) * tileSize, tileSize, tileSize);
+        else
+          g.fillRect((tile.getX()-1) * tileSize, (tile.getY()-1) * tileSize, tileSize, tileSize);
+
       }
     }
     for (Piece piece : Board.getPieces()) {
@@ -69,24 +85,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
             g.fillRect((king.getX()-1)*tileSize, (king.getY()-1)*tileSize, tileSize, tileSize);
           }
         if (piece.getColour().equals("white")) {
-          g.drawImage(
-                  piece.getWhiteImage(),
-                  (piece.getX() - 1) * tileSize,
-                  (piece.getY() - 1) * tileSize,
-                  tileSize,
-                  tileSize,
-                  null
-          );
+          if (flipScreen)
+            g.drawImage(piece.getWhiteImage(), (piece.getX() - 1) * tileSize,
+                    (8 - piece.getY()) * tileSize, tileSize, tileSize, null);
+          else g.drawImage(piece.getWhiteImage(), (piece.getX() - 1) * tileSize,
+                  (piece.getY()-1) * tileSize, tileSize, tileSize, null);
         } else
-          g.drawImage(
-                  piece.getBlackImage(),
-                  (piece.getX() - 1) * tileSize,
-                  (piece.getY() - 1) * tileSize,
-                  tileSize,
-                  tileSize,
-                  null
-          );
+          if (flipScreen)
+            g.drawImage(piece.getBlackImage(), (piece.getX() - 1) * tileSize,
+                    (8-piece.getY() ) * tileSize, tileSize, tileSize, null);
+
+          else g.drawImage(piece.getBlackImage(), (piece.getX() - 1) * tileSize,
+                  (piece.getY() -1) * tileSize, tileSize, tileSize, null);
       }
+
+    g.setColor(Color.BLUE);
+    g.setFont(new Font("Arial", Font.BOLD, 30));
+    g.drawString(String.valueOf(currentPositionRating), screenLength-(screenHeightAddOn/2), screenHeight-(screenHeightAddOn)/2);
     }
 
   @Override
@@ -154,14 +169,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         if(currentPieceMoving.getLegalTiles().contains(chosenTile)) {
           Move move = GameLogic.createMove(tileX, tileY, currentPieceMoving);
           Board.makeMove(move, false);
+          currentPositionRating = PositionRater.ratePosition(Board.getPieces());
           repaint();
+          //flipScreen();
           if(playCpu && turn.equals(cpuColour))
             cpu.playMove();
         }
       }
     } catch (NullPointerException _ ) {
     }
-
 
   repaint();
   }

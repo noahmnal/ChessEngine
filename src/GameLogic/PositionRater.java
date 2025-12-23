@@ -23,12 +23,12 @@ public class PositionRater {
     int whitePieceValue = 0;
     int blackPieceValue = 0;
     int rating;
-
     for (Piece piece : pieces) {
       if (piece.getColour().equals("white")) {
         whitePieceValue += piece.value;
         if (!endgame) {
           whitePieceValue += piece.getAttackTiles().size();
+          System.out.println(piece+ "   :  " + piece.getAttackTiles().size());
           if (piece instanceof King king && king.hasCastled) {
             whitePieceValue += 80;
           }
