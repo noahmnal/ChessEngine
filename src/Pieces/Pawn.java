@@ -1,6 +1,6 @@
 package Pieces;
 
-import Models.Board;
+import GameLogic.MovesHistory;
 import Models.Tile;
 import javax.swing.*;
 import java.awt.*;
@@ -84,20 +84,21 @@ public class Pawn extends Piece {
     return enPassantMove;
   }
 
+
   private void addEnPassant(ArrayList<Tile> legalTiles) {
-    if (Board.enPassantPossible == null) return;
-    Pawn p = Board.enPassantPossible;
+    if (MovesHistory.getMoves() == null) return;
+    Pawn pawnToBeCaptured= MovesHistory.getMoves().getLast().getEnPasantNextTurn();
+    if (pawnToBeCaptured == null) return;
+    if (pawnToBeCaptured.getColour().equals(colour)) return;
+    if (pawnToBeCaptured.getY() == y && Math.abs(pawnToBeCaptured.getX()-x) == 1) {
+      int direction = colour.equals("white") ? 1 : -1;
+      Tile enpassantTile = new Tile(pawnToBeCaptured.getX(), y + direction);
+      legalTiles.add(enpassantTile);
+      enPassantMove = enpassantTile;
+    }
+  }
 
-    if (p.getColour().equals(colour)) return;
-
-    if (p.getY() != this.y) return;
-
-    if (Math.abs(p.getX() - this.x) != 1) return;
-
-    int direction = colour.equals("white") ? 1 : -1;
-    Tile enpassantTile = new Tile(p.getX(), y + direction);
-    legalTiles.add(enpassantTile);
-    enPassantMove = enpassantTile;
-    enPassantPawn = true;
+  public void setEnPassantMove(Tile enPassantMove) {
+    this.enPassantMove = enPassantMove;
   }
 }

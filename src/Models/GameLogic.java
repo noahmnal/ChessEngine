@@ -4,6 +4,7 @@ import Pieces.Pawn;
 import Pieces.Piece;
 import Pieces.Rook;
 import GameLogic.Move;
+import GameLogic.MovesHistory;
 
 public class GameLogic {
   public Piece getMouseLocationPiece(int mouseX, int mouseY){
@@ -45,10 +46,11 @@ public class GameLogic {
 
       if (pawn.getEnPassantMove() != null && pawn.getEnPassantMove().getX() == x && pawn.getEnPassantMove().getY() == y) {
         int sign = pawn.getColour().equals("white") ? 1 : -1;
-        pawn.enPassantPawn = false;
-        Piece capturedPiece = Board.getCapturedPiece(x, y, piece.getColour(), true, sign);
-        return new Move(piece.getX(), piece.getY(), x, y, piece,
-                capturedPiece, true, sign, null, null, (Pawn) capturedPiece);
+        if (MovesHistory.getMoves() != null) {
+          Piece capturedPiece = MovesHistory.getMoves().getLast().getEnPasantNextTurn();
+          return new Move(piece.getX(), piece.getY(), x, y, piece,
+                  capturedPiece, true, sign, null, null, (Pawn) capturedPiece);
+        }
       }
     }
     else if (piece instanceof King king && !king.hasCastled) {
@@ -65,7 +67,8 @@ public class GameLogic {
                     x, y, piece, null, false, 3, chosenRook, null, null);
           }
         }
-      } catch (NullPointerException _) {
+      } catch (NullPointerException e) {
+        System.out.println(e.getMessage());
       }
     }
     Piece capturedPiece = Board.getCapturedPiece(x, y, piece.getColour(), false, 0);

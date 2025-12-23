@@ -35,7 +35,7 @@ public class Cpu {
         Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
         Board.makeMove(move, true);
         int score = minimax(3, GamePanel.turn.equals("white"), -100000, 100000);
-        Board.reverseMove(move, true);
+        Board.reverseMove(move);
         if (GamePanel.turn.equals("white")) {
           if (score > bestScore) {
             bestScore = score;
@@ -64,7 +64,7 @@ public class Cpu {
         Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
         Board.makeMove(move, true);
         int score = minimax(depth - 1, false,  alpha, beta);
-        Board.reverseMove(move, true);
+        Board.reverseMove(move);
         higestScore = Math.max(higestScore, score);
         alpha = Math.max(alpha, higestScore);
         if (beta <= alpha) {
@@ -81,7 +81,7 @@ public class Cpu {
           Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
           Board.makeMove(move, false);
           int score = minimax(depth - 1, true, alpha, beta);
-          Board.reverseMove(move, false);
+          Board.reverseMove(move);
           lowestScore = Math.min(lowestScore, score);
           beta = Math.min(beta, score);
           if (beta <= alpha) {

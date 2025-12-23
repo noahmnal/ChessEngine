@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public abstract class Piece {
 
-  protected Board board;
   protected boolean haveMoved = false;
 
   public int getX() {
@@ -146,5 +145,15 @@ public abstract class Piece {
       }
     }
     return legal;
+  }
+
+  @Override
+  public String toString() {
+    return "Piece{" +
+            ", colour='" + colour + '\'' +
+            ", y=" + y +
+            ", x=" + x +
+            ", haveMoved=" + haveMoved +
+            '}';
   }
 }

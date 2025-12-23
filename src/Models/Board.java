@@ -11,7 +11,6 @@ public class Board {
   private static final ArrayList<Tile> tiles = new ArrayList<>();
   public static boolean whiteInCheck = false;
   public static boolean blackInCheck = false;
-  public static Pawn enPassantPossible = null;
   private static final ArrayList<Piece> pieces = new ArrayList<>();
 
   public static void init() {
@@ -89,16 +88,13 @@ public class Board {
       pieces.remove(move.getCapturedPiece());
     }
     MovesHistory.addMove(move);
-
-    if (!simulation) {
-      move.getPiece().setHaveMoved(true);
+    move.getPiece().setHaveMoved(true);
+    if (!simulation)
       setChecksForKings();
-    }
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
-    enPassantPossible = move.getEnPasantNextTurn();
   }
 
-  public static void reverseMove(Move move, boolean simulate) {
+  public static void reverseMove(Move move) {
     if (move.isCastle()) {
       move.getCastlingRook().setX(move.getCastlingRook().getX() - move.getDirection());
       if (move.getPiece() instanceof King king) {
@@ -118,17 +114,9 @@ public class Board {
     move.getPiece().setY(move.getFromY());
 
     assert MovesHistory.getMoves() != null;
-    enPassantPossible = MovesHistory.getMoves().getLast().getEnPasantNextTurn();
 
-
-    if (!simulate) {
-      if (move.isFirstMove())
-        move.getPiece().setHaveMoved(false);
-    }
-    if (move.isEnPassant()) {
-
-
-    }
+    if (move.isFirstMove())
+      move.getPiece().setHaveMoved(false);
     MovesHistory.removeLast();
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
@@ -179,7 +167,9 @@ public class Board {
       if (piece.getColour().equals(colour)) {
         try {
           attackedTiles.addAll(piece.getAttackTiles());
-        } catch (NullPointerException _) {}
+        } catch (NullPointerException e) {
+          System.out.println(e.getMessage());
+        }
       }
     }
     return attackedTiles;
@@ -206,7 +196,7 @@ public class Board {
     if (MovesHistory.getMoves() != null)
        lastMove = MovesHistory.getMoves().getLast();
     assert lastMove != null;
-    reverseMove(lastMove, false);
+    reverseMove(lastMove);
   }
 
   public static Piece getCapturedPiece(int x, int y, String colour, boolean enPassant, int sign) {
@@ -236,13 +226,13 @@ public class Board {
       boolean illegal =
               piece.getColour().equals("white") ? whiteInCheck : blackInCheck;
 
-      reverseMove(move, true);
+      reverseMove(move);
       setChecksForKings();
       return !illegal;
   }
 
   public static Piece getPiece(int x, int y) {
-    for (Piece piece : getPieces()) {
+    for (Piece piece : pieces) {
       if (piece.getX() == x && piece.getY() == y) {
         return piece;
       }
