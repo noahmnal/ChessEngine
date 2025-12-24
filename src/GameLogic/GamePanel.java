@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import static Cpu.OpeningBook.buildWholeFen;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
   public boolean playCpu = false;
@@ -72,7 +71,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
       }
     }
     if (holdingPiece) {
-      for (Tile tile : currentPieceMoving.getLegalTiles()){
+      for (Tile tile : currentPieceMoving.setAndGetLegalTiles()){
         g.setColor(Color.GREEN);
         if (flipScreen)
           g.fillRect((tile.getX()-1) * tileSize, (8-tile.getY()) * tileSize, tileSize, tileSize);
@@ -169,8 +168,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     try {
       if (turn.equals(currentPieceMoving.getColour())) {
         Tile chosenTile = new Tile(tileX, tileY);
-        if(currentPieceMoving.getLegalTiles().contains(chosenTile)) {
+        if(currentPieceMoving.setAndGetLegalTiles().contains(chosenTile)) {
           Move move = GameLogic.createMove(tileX, tileY, currentPieceMoving);
+          if (!MovesHistory.getMoves().isEmpty())
+            System.out.println(OpeningBook.moveNotation(move));
           Board.makeMove(move, false);
           currentPositionRating = PositionRater.ratePosition(Board.getPieces());
           repaint();

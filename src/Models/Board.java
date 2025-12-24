@@ -1,5 +1,6 @@
 package Models;
 
+import Cpu.OpeningBook;
 import Pieces.*;
 
 import java.util.ArrayList;
@@ -96,11 +97,13 @@ public class Board {
     if (move.getPiece() instanceof Pawn) {
       fiftyMoveCounter = 0;
     }
-    MovesHistory.addMove(move);
+
     move.getPiece().setHaveMoved(true);
-    if (!simulation)
+    if (!simulation) {
       setChecksForKings();
-    else fiftyMoveCounter = saveFiftyMoveCounter;
+      MovesHistory.addMove(move);
+    } else fiftyMoveCounter = saveFiftyMoveCounter;
+
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
@@ -129,13 +132,13 @@ public class Board {
     move.getPiece().setX(move.getFromX());
     move.getPiece().setY(move.getFromY());
 
-    assert MovesHistory.getMoves() != null;
-
     if (move.isFirstMove())
       move.getPiece().setHaveMoved(false);
-    MovesHistory.removeLast();
-    if (simulation)
+    if (!simulation) {
       fiftyMoveCounter = saveFiftyMoveCounter;
+      if (!MovesHistory.getMoves().isEmpty())
+        MovesHistory.removeLast();
+    }
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
@@ -218,7 +221,7 @@ public class Board {
 
   public static void undoMove() {
     Move lastMove = null;
-    if (MovesHistory.getMoves() != null)
+    if (!MovesHistory.getMoves().isEmpty())
        lastMove = MovesHistory.getMoves().getLast();
     assert lastMove != null;
     reverseMove(lastMove, false);
@@ -245,7 +248,6 @@ public class Board {
   public static boolean simulateIsMoveLegal(Piece piece, Tile targetTile) {
       Move move = GameLogic.createMove(targetTile.getX(), targetTile.getY(), piece);
       makeMove(move, true);
-
       setChecksForKings();
 
       boolean illegal =

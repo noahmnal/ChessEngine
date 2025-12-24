@@ -6,7 +6,6 @@ import Pieces.Piece;
 import Models.Tile;
 import GameLogic.*;
 
-import static Cpu.OpeningBook.buildWholeFen;
 
 public class Cpu {
   private int nodes;
@@ -33,7 +32,7 @@ public class Cpu {
     else
       bestScore = Integer.MAX_VALUE;
     for (Piece piece : Board.getColouredPieces(GamePanel.turn)) {
-      for (Tile tile : piece.getLegalTiles()) {
+      for (Tile tile : piece.setAndGetLegalTiles()) {
         Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
         Board.makeMove(move, true);
         int score = minimax(3, GamePanel.turn.equals("white"), -100000, 100000);
@@ -62,9 +61,7 @@ public class Cpu {
       return -1000000;
 
     }
-    int gameTurn = 0;
-    if (MovesHistory.getMoves() != null)
-      gameTurn = (MovesHistory.getMoves().size()/2+1);
+    int gameTurn = (MovesHistory.getMoves().size()/2+1);
     nodes++;
     if (depth == 0) {
       return PositionRater.ratePosition(Board.getPieces());
@@ -93,15 +90,6 @@ public class Cpu {
           Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
           Board.makeMove(move, true);
           if (gameTurn == 3) {
-            String currentPos = buildWholeFen(gameTurn);
-            for (String opening : OpeningBook.moves2) {
-              if (currentPos.equals(opening)) {
-                System.out.println(currentPos);
-                Board.reverseMove(move, true);
-                openingMoveFound = true;
-                return -1000000;
-              }
-            }
           }
           int score = minimax(depth - 1, true, alpha, beta);
           Board.reverseMove(move, true);

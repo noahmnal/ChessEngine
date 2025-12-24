@@ -9,8 +9,6 @@ import java.util.Objects;
 
 public class Pawn extends Piece {
   Tile enPassantMove = null;
-  public boolean enPassantPawn = false;
-
   public Pawn(int x, int y, String color) {
     super(x, y, color);
     value = 100;
@@ -39,8 +37,14 @@ public class Pawn extends Piece {
   }
 
   @Override
-  public ArrayList<Tile> getLegalTiles() {
-    return filterLegalTiles(getSudoLegalTiles());
+  public ArrayList<Tile> getOldLegalTiles() {
+    return legalTiles;
+  }
+
+  @Override
+  public ArrayList<Tile> setAndGetLegalTiles() {
+    legalTiles = filterLegalTiles(getSudoLegalTiles());
+    return legalTiles;
   }
 
 
@@ -86,7 +90,7 @@ public class Pawn extends Piece {
 
 
   private void addEnPassant(ArrayList<Tile> legalTiles) {
-    if (MovesHistory.getMoves() == null) return;
+    if (MovesHistory.getMoves().isEmpty()) return;
     Pawn pawnToBeCaptured= MovesHistory.getMoves().getLast().getEnPasantNextTurn();
     if (pawnToBeCaptured == null) return;
     if (pawnToBeCaptured.getColour().equals(colour)) return;

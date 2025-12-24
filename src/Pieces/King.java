@@ -59,9 +59,17 @@ public class King extends Piece {
   }
 
   @Override
-  public ArrayList<Tile> getLegalTiles() {
-    return filterLegalTiles(getSudoLegalTiles());
+  public ArrayList<Tile> getOldLegalTiles() {
+    return legalTiles;
   }
+
+  @Override
+  public ArrayList<Tile> setAndGetLegalTiles() {
+    legalTiles = filterLegalTiles(getSudoLegalTiles());
+    return legalTiles;
+  }
+
+
 
   public void castleIfPossible(ArrayList<Tile> legalTiles) {
     if (hasCastled) {

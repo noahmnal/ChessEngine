@@ -22,12 +22,19 @@ public class Queen extends Piece {
   }
 
   @Override
-  public ArrayList<Tile> getLegalTiles() {
+  public ArrayList<Tile> getOldLegalTiles() {
+    return legalTiles;
+  }
+
+  @Override
+  public ArrayList<Tile> setAndGetLegalTiles() {
     ArrayList<Tile> tiles = new ArrayList<>();
     tiles.addAll(getAllDiagonalTiles());
     tiles.addAll(getAllStraightTiles());
-    return filterLegalTiles(tiles);
+    legalTiles = filterLegalTiles(tiles);
+    return legalTiles;
   }
+
 
 
 

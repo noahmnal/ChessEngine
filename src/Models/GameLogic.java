@@ -38,7 +38,7 @@ public class GameLogic {
       if (y == 1 || y == 8) {
         return new Move(piece.getX(), piece.getY(), x, y, piece, Board.getPiece(x, y), false, 0, null, pawn, null);
       }
-      if (Math.abs(pawn.getY()-y) == 2) {
+      if (Math.abs(pawn.getY() - y) == 2) {
         Piece capturedPiece = Board.getCapturedPiece(x, y, piece.getColour(), false, 0);
         return new Move(pawn.getX(), pawn.getY(), x, y, piece,
                 capturedPiece, false, 0, null, null, pawn);
@@ -46,7 +46,7 @@ public class GameLogic {
 
       if (pawn.getEnPassantMove() != null && pawn.getEnPassantMove().getX() == x && pawn.getEnPassantMove().getY() == y) {
         int sign = pawn.getColour().equals("white") ? 1 : -1;
-        if (MovesHistory.getMoves() != null) {
+        if (!MovesHistory.getMoves().isEmpty()) {
           Piece capturedPiece = MovesHistory.getMoves().getLast().getEnPasantNextTurn();
           return new Move(piece.getX(), piece.getY(), x, y, piece,
                   capturedPiece, true, sign, null, null, (Pawn) capturedPiece);

@@ -1,5 +1,6 @@
 package Pieces;
 
+import GameLogic.Move;
 import Models.Board;
 import Models.Tile;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 
 public abstract class Piece {
 
+  protected ArrayList<Tile> legalTiles = new ArrayList<>();
   protected boolean haveMoved = false;
 
   public int getX() {
@@ -50,7 +52,8 @@ public abstract class Piece {
   protected String colour;
   protected Image whiteImage;
 
-  public abstract ArrayList<Tile> getLegalTiles();
+  public abstract ArrayList<Tile> getOldLegalTiles();
+  public abstract ArrayList<Tile> setAndGetLegalTiles();
   public abstract ArrayList<Tile> getAttackTiles();
   public abstract ArrayList<Tile> getSudoLegalTiles();
   public int value;

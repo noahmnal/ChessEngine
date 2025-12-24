@@ -21,14 +21,22 @@ public class Bishop extends Piece {
   }
 
   @Override
-  public ArrayList<Tile> getLegalTiles() {
-      return filterLegalTiles(getAllDiagonalTiles());
+  public ArrayList<Tile> getOldLegalTiles() {
+    return legalTiles;
   }
+
+  @Override
+  public ArrayList<Tile> setAndGetLegalTiles() {
+    legalTiles = filterLegalTiles(getAllDiagonalTiles());
+      return legalTiles;
+  }
+
 
   @Override
   public ArrayList<Tile> getAttackTiles() {
     return getAllDiagonalTiles();
   }
+
 
   @Override
   public ArrayList<Tile> getSudoLegalTiles() {

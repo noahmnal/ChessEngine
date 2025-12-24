@@ -22,9 +22,17 @@ public class Knight extends Piece {
   }
 
   @Override
-  public ArrayList<Tile> getLegalTiles() {
-    return filterLegalTiles(findMoves());
+  public ArrayList<Tile> getOldLegalTiles() {
+    return legalTiles;
   }
+
+  @Override
+  public ArrayList<Tile> setAndGetLegalTiles() {
+    legalTiles = filterLegalTiles(findMoves());
+    return legalTiles;
+  }
+
+
 
   @Override
   public ArrayList<Tile> getSudoLegalTiles() {
