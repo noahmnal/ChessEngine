@@ -8,6 +8,8 @@ import GameLogic.GamePanel;
 import GameLogic.Move;
 import GameLogic.MovesHistory;
 
+import static GameLogic.GamePanel.sanMoveHistory;
+
 public class Board {
   private static final ArrayList<Tile> tiles = new ArrayList<>();
   public static boolean whiteInCheck = false;
@@ -102,7 +104,10 @@ public class Board {
     if (!simulation) {
       setChecksForKings();
       MovesHistory.addMove(move);
-    } else fiftyMoveCounter = saveFiftyMoveCounter;
+      sanMoveHistory.add(OpeningBook.moveNotation(move));
+    } else {
+        fiftyMoveCounter = saveFiftyMoveCounter;
+    }
 
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
@@ -135,6 +140,7 @@ public class Board {
     if (move.isFirstMove())
       move.getPiece().setHaveMoved(false);
     if (!simulation) {
+      sanMoveHistory.removeLast();
       fiftyMoveCounter = saveFiftyMoveCounter;
       if (!MovesHistory.getMoves().isEmpty())
         MovesHistory.removeLast();

@@ -10,6 +10,7 @@ import Pieces.King;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
@@ -18,6 +19,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   public static final int screenHeight = 760;
   private static final int screenLengthAddOn = 50;
   private static final int screenHeightAddOn = 50;
+  public static final ArrayList<String> sanMoveHistory = new ArrayList<>();
 
   private final GameLogic gameLogic;
   private Cpu cpu = null;
@@ -84,7 +86,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         if (piece instanceof King king)
           if (king.getInCheck()) {
             g.setColor(Color.BLUE);
-            g.fillRect((king.getX()-1)*tileSize, (king.getY()-1)*tileSize, tileSize, tileSize);
+            if (flipScreen)
+              g.fillRect((king.getX()-1)*tileSize, (8-king.getY())*tileSize, tileSize, tileSize);
+            else g.fillRect((king.getX()-1)*tileSize, (king.getY()-1)*tileSize, tileSize, tileSize);
           }
         if (piece.getColour().equals("white")) {
           if (flipScreen)
@@ -170,14 +174,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         Tile chosenTile = new Tile(tileX, tileY);
         if(currentPieceMoving.setAndGetLegalTiles().contains(chosenTile)) {
           Move move = GameLogic.createMove(tileX, tileY, currentPieceMoving);
-          if (!MovesHistory.getMoves().isEmpty())
-            System.out.println(OpeningBook.moveNotation(move));
           Board.makeMove(move, false);
-          currentPositionRating = PositionRater.ratePosition(Board.getPieces());
           repaint();
+          currentPositionRating = PositionRater.ratePosition(Board.getPieces());
           //flipScreen();
-          if(playCpu && turn.equals(cpuColour))
+          if(playCpu && turn.equals(cpuColour)) {
             cpu.playMove();
+          }
         }
       }
     } catch (NullPointerException _ ) {

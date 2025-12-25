@@ -33,7 +33,7 @@ public class PositionRater {
           }
         } else {
           if (piece instanceof King king && whitePieceValue > blackPieceValue) {
-            blackPieceValue += kingPointBoard[king.getX()][king.getY()];
+            blackPieceValue += kingPointBoard[king.getX()-1][king.getY()-1];
           }
         }
       } else {
@@ -45,7 +45,7 @@ public class PositionRater {
           }
         } else  {
           if (piece instanceof King king && blackPieceValue > whitePieceValue) {
-            whitePieceValue += kingPointBoard[king.getX()][king.getY()];
+            whitePieceValue += kingPointBoard[king.getX()-1][king.getY()-1];
           }
         }
       }

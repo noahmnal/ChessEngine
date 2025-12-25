@@ -11,26 +11,92 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class OpeningBook {
-  public static List<String> moves;
+  public static List<String> gmGames;
+  public static List<String> noobOpenings;
+
 
 
 
   public OpeningBook() throws IOException {
-     moves = Files.readAllLines(
-            Path.of("src/Cpu/Games.txt"));
+     gmGames = Files.readAllLines(
+            Path.of("src/Cpu/GmGames.txt"));
 
-     System.out.println(moves.getFirst());
+     noobOpenings = Files.readAllLines(Path.of("src/Cpu/6movesOpenings.txt"));
+
+  }
+
+  public static String findMoveInBook(String[] gameNotation, List<String> openingBook) {
+    System.out.println(Arrays.toString(gameNotation));
+    int count = 0;
+    outer: for (String move : openingBook)  {
+      count++;
+      String[] separatedMoves = move.split(" ");
+      for (int i = 0; i < gameNotation.length; i++) {
+        if (!gameNotation[i].equals(separatedMoves[i])) {
+          continue outer;
+        }
+      }
+      System.out.println(count);
+      return separatedMoves[gameNotation.length];
+    }
+    return "";
+  }
+
+  public static Move notationToMove(String notation, String colour) {
+    System.out.println(notation);
+    int toX;
+    int toY;
+    notation = notation.replace("+", "").replace("#", "").replace("x", "");
+    Tile tile;
+    String pieceName;
+
+    if (notation.equals("O-O")) {
+      if (colour.equals("white")) {
+        return new Move(5, 1, 7, 1, Board.getPiece(5, 1), null, false, 0,
+                (Rook) Board.getPiece(8,1), null, null);
+      }
+      else return new Move(5, 8, 7, 8, Board.getPiece(5, 8), null, false, 0,
+              (Rook) Board.getPiece(8,8), null, null);
+    }
+    if (notation.equals("O-O-O")) {
+      if (colour.equals("white")) {
+        return new Move(5, 1, 3, 1, Board.getPiece(5, 1), null, false, 0,
+                (Rook) Board.getPiece(1, 1), null, null);
+      } else return new Move(5, 8, 3, 8, Board.getPiece(5, 8), null, false, 0,
+              (Rook) Board.getPiece(1, 8), null, null);
+    }
+    toX = charToXCord(notation.charAt(notation.length() - 2));
+    toY = Character.getNumericValue(notation.charAt(notation.length() - 1));
+    tile = new Tile(toX, toY);
+    System.out.println(tile);
+
+
+    if (Character.isLowerCase(notation.charAt(0)))
+      pieceName = "Pawn";
+    else
+      pieceName = notationCharToPiece(notation.charAt(0));
+
+    for (Piece p : Board.getPieces()) {
+      if (p.getColour().equals(colour)) {
+      if (p.getClass().getSimpleName().equals(pieceName)) {
+        if (p.setAndGetLegalTiles().contains(tile))
+          return new Move(p.getX(), p.getY(), toX, toY, p, Board.getCapturedPiece(toX, toY, colour, false, 0));
+      }
+      }
+    }
+    System.out.println("ERROR");
+    return null;
   }
 
   public static String moveNotation(Move move) {
     if (move.isCastle()) {
       if (move.getCastlingRook().getX() == 8)
-        return "O-O"+addCheckSymbol(move);
-      else return "O-O-O"+addCheckSymbol(move);
+        return "O-O" + addCheckSymbol(move);
+      else return "O-O-O" + addCheckSymbol(move);
     }
     if (move.getPiece() instanceof Pawn pawn && move.getCapturedPiece() != null)
-      return  xCordToLetter(pawn.getX()) + captureNotation(move) + xCordToLetter(move.getCapturedPiece().getX()) + move.getToY();
-    return pieceToFenChar(move.getPiece()) + checkForClarification(move)
+      return  xCordToLetter(move.getFromX()) + captureNotation(move) + xCordToLetter(move.getCapturedPiece().getX()) + move.getToY();
+    return pieceToNotationChar(move.getPiece()) + checkForClarification(move)
             + captureNotation(move) + xCordToLetter(move.getToX()) + move.getToY() + addCheckSymbol(move);
   }
 
@@ -52,15 +118,12 @@ public class OpeningBook {
 
   private static String addCheckSymbol(Move move) {
     boolean inCheck = false;
-    Board.makeMove(move, true);
-    String enemyColour =
-            move.getPiece().getColour().equals("white") ? "black" : "white";
+    String enemyColour = move.getPiece().getColour().equals("white") ? "black" : "white";
     for (King king : Board.getKings()) {
       if (king.getColour().equals(enemyColour)) {
         inCheck = Board.getAllAttackedTiles(move.getPiece().getColour()).contains(new Tile(king.getX(), king.getY()));
       }
     }
-    Board.reverseMove(move, true);
     if (inCheck)
       return "+";
     return "";
@@ -74,20 +137,14 @@ public class OpeningBook {
     return "";
   }
   private static String xCordToLetter(int x) {
-    return switch (x) {
-      case 1 -> "a";
-      case 2 -> "b";
-      case 3 -> "c";
-      case 4 -> "d";
-      case 5 -> "e";
-      case 6 -> "f";
-      case 7 -> "g";
-      case 8 -> "h";
-      default -> "?";
-    };
+    return String.valueOf((char) ('a' + x - 1));
   }
 
-  private static String pieceToFenChar(Piece p) {
+  private static int charToXCord(char x) {
+    return x - 'a' + 1;
+  }
+
+  private static String pieceToNotationChar(Piece p) {
     return switch (p) {
       case Pawn _ -> "";
       case Knight _ -> "N";
@@ -98,6 +155,18 @@ public class OpeningBook {
       default -> "?";
     };
   }
+
+    public static String notationCharToPiece(char c) {
+      return switch (c) {
+        case 'N' -> "Knight";
+        case 'B' -> "Bishop";
+        case 'R' -> "Rook";
+        case 'Q' -> "Queen";
+        case 'K' -> "King";
+        default  -> "Pawn";
+      };
+    }
+
 
 
 

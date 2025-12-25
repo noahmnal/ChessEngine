@@ -6,21 +6,34 @@ import Pieces.Piece;
 import Models.Tile;
 import GameLogic.*;
 
+import static GameLogic.GamePanel.sanMoveHistory;
+
 
 public class Cpu {
   private int nodes;
-  private boolean openingMoveFound = false;
+  private boolean opening = true;
 
   public Cpu() {
   }
 
   public void playMove() {
-    System.out.println("Playing move");
+    if (opening) {
+      String nextMove = OpeningBook.findMoveInBook(sanMoveHistory.toArray(new String[0]), OpeningBook.gmGames);
+      if (nextMove.isEmpty()) {
+        nextMove = OpeningBook.findMoveInBook(sanMoveHistory.toArray(new String[0]), OpeningBook.noobOpenings);
+        System.out.println("from nobbboom" + nextMove);
+      }
+
+      if (nextMove.isEmpty()) {
+        opening = false;
+      } else {
+        Board.makeMove(OpeningBook.notationToMove(nextMove, GamePanel.turn), false);
+        return;
+      }
+    }
     Move move = findBestMove();
      Board.makeMove(move, false);
-     System.out.println(nodes);
-     System.out.println(move);
-
+     //System.out.println(nodes);
   }
 
   public Move findBestMove() {
@@ -46,9 +59,6 @@ public class Cpu {
           if (score < bestScore) {
             bestScore = score;
             bestMove = move;
-            if (openingMoveFound) {
-              return bestMove;
-            }
           }
         }
       }
@@ -57,10 +67,6 @@ public class Cpu {
   }
 
   public int minimax(int depth, boolean isWhiteTurn, int alpha, int beta) {
-    if (openingMoveFound) {
-      return -1000000;
-
-    }
     int gameTurn = (MovesHistory.getMoves().size()/2+1);
     nodes++;
     if (depth == 0) {
