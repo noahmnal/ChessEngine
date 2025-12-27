@@ -12,7 +12,8 @@ import java.util.*;
 
 public class OpeningBook {
   public static List<String> gmGames;
-  public static List<String> noobOpenings;
+  public static List<String> noobOpeningsWhite;
+  public static List<String> noobOpeningsBlack;
 
 
 
@@ -21,7 +22,10 @@ public class OpeningBook {
      gmGames = Files.readAllLines(
             Path.of("src/Cpu/GmGames.txt"));
 
-     noobOpenings = Files.readAllLines(Path.of("src/Cpu/6movesOpenings.txt"));
+     noobOpeningsWhite = Files.readAllLines(Path.of("src/Cpu/6movesOpeningsWhite+0.5.txt"));
+
+    noobOpeningsBlack = Files.readAllLines(Path.of("src/Cpu/5movesOpeningsBlack-0.2.txt"));
+
 
   }
 

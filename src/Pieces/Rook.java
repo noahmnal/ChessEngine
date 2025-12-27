@@ -25,6 +25,7 @@ public class Rook extends Piece {
 
   @Override
   public ArrayList<Tile> getAttackTiles() {
+    defendingTiles.clear();
     return getAllStraightTiles();
   }
 
@@ -35,7 +36,7 @@ public class Rook extends Piece {
 
   @Override
   public ArrayList<Tile> setAndGetLegalTiles() {
-    legalTiles = filterLegalTiles(getSudoLegalTiles());
+    legalTiles = filterLegalTiles(getAttackTiles());
     return legalTiles;
   }
 

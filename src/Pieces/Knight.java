@@ -28,7 +28,7 @@ public class Knight extends Piece {
 
   @Override
   public ArrayList<Tile> setAndGetLegalTiles() {
-    legalTiles = filterLegalTiles(findMoves());
+    legalTiles = filterLegalTiles(getAttackTiles());
     return legalTiles;
   }
 
@@ -45,7 +45,7 @@ public class Knight extends Piece {
       for (int j = -2; j < 3; j++) {
         if (Math.abs(i) + Math.abs(j) == 3 && x+i > 0 && y+j > 0 && x+i <= 8 && y+j <= 8) {
           Tile tile = new Tile(x+i, y+j);
-          if (!checkIfOwnColour(tiles, tile) && !tiles.contains(tile))
+          if (!checkIfOwnColour(tiles, tile, defendingTiles) && !tiles.contains(tile))
             tiles.add(tile);
         }
       }
@@ -55,6 +55,7 @@ public class Knight extends Piece {
 
   @Override
   public ArrayList<Tile> getAttackTiles() {
+    defendingTiles.clear();
     return findMoves();
   }
 

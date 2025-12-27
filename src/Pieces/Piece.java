@@ -6,10 +6,12 @@ import Models.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public abstract class Piece {
 
   protected ArrayList<Tile> legalTiles = new ArrayList<>();
+  public ArrayList<Tile> defendingTiles = new ArrayList<>();
   protected boolean haveMoved = false;
 
   public int getX() {
@@ -37,6 +39,7 @@ public abstract class Piece {
   public Image getBlackImage() {
     return blackImage;
   }
+
 
   public void setY(int y) {
     this.y = y;
@@ -87,20 +90,20 @@ public abstract class Piece {
         tile = new Tile(pos+i, y);
       else
         tile = new Tile(x, pos+i);
-      if (checkIfOwnColour(tiles, tile)) break;
+      if (checkIfOwnColour(tiles, tile, defendingTiles)) break;
     }
     return tiles;
   }
 
-  protected boolean checkIfOwnColour(ArrayList<Tile> tiles, Tile tile) {
+  protected boolean checkIfOwnColour(ArrayList<Tile> legalTiles, Tile tile, ArrayList<Tile> defendingTile) {
     Piece piece = Board.getPiece(tile.getX(), tile.getY());
     if (piece == null) {
-      tiles.add(tile);
+      legalTiles.add(tile);
       return false;
     }
     if (!piece.getColour().equals(colour)) {
-      tiles.add(tile);
-    }
+      legalTiles.add(tile);
+    } else defendingTile.add(tile);
     return true;
   }
 
@@ -126,7 +129,7 @@ public abstract class Piece {
         tile = new Tile(x+i, y-i);
       if (tile.getX() > 8 || tile.getX() < 1 || tile.getY() > 8 || tile.getY() < 1)
         break;
-      if (checkIfOwnColour(tiles, tile)) break;
+      if (checkIfOwnColour(tiles, tile, defendingTiles)) break;
     }
     return tiles;
   }
@@ -158,5 +161,19 @@ public abstract class Piece {
             ", x=" + x +
             ", haveMoved=" + haveMoved +
             '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Piece piece = (Piece) o;
+    return x == piece.x && y == piece.y &&
+            Objects.equals(colour, piece.colour);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y, colour);
   }
 }

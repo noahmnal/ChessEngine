@@ -9,6 +9,7 @@ public class MovesHistory {
 
   public static void addMove(Move move) {
     moves.add(move);
+    System.out.println(move);
   }
 
   public static ArrayList<Move> getMoves() {

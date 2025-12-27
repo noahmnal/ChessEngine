@@ -15,7 +15,7 @@ void main() throws InterruptedException, IOException {
     window.setLocation(200, 0);
     window.setVisible(true);
     GameLogic gameLogic = new GameLogic();
-  OpeningBook openingBook = new OpeningBook();
+    OpeningBook openingBook = new OpeningBook();
 
     GamePanel game_window = new GamePanel(gameLogic);
     window.add(game_window);

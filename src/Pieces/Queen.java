@@ -28,10 +28,8 @@ public class Queen extends Piece {
 
   @Override
   public ArrayList<Tile> setAndGetLegalTiles() {
-    ArrayList<Tile> tiles = new ArrayList<>();
-    tiles.addAll(getAllDiagonalTiles());
-    tiles.addAll(getAllStraightTiles());
-    legalTiles = filterLegalTiles(tiles);
+    defendingTiles.clear();
+    legalTiles = filterLegalTiles(getAttackTiles());
     return legalTiles;
   }
 

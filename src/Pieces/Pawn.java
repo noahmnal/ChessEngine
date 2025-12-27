@@ -50,6 +50,7 @@ public class Pawn extends Piece {
 
   @Override
   public ArrayList<Tile> getAttackTiles() {
+    defendingTiles.clear();
     ArrayList<Tile> attackingTiles = new ArrayList<>();
     if (colour.equals("white")) findDiagonalTiles(attackingTiles, 1);
     else findDiagonalTiles(attackingTiles, -1);
@@ -80,7 +81,7 @@ public class Pawn extends Piece {
     for (int i = -1; i < 2; i += 2) {
       newTile = new Tile(x + i, y + sign);
       if (checkForPiecesBlocking(newTile))
-        checkIfOwnColour(legalTiles, newTile);
+        checkIfOwnColour(legalTiles, newTile, defendingTiles);
     }
   }
 

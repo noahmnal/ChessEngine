@@ -31,7 +31,7 @@ public class King extends Piece {
       for (int j = -1; j < 2; j++) {
         if (x+i < 1 || x+i > 8 || y+j < 1 || y+j > 8) continue;
         Tile tile = new Tile(x+i, y+j);
-        if (!checkIfOwnColour(legalTiles, tile))
+        if (!checkIfOwnColour(legalTiles, tile, defendingTiles))
           legalTiles.add(tile);
       }
     }
@@ -48,6 +48,7 @@ public class King extends Piece {
 
   @Override
   public ArrayList<Tile> getAttackTiles() {
+    defendingTiles.clear();
     ArrayList<Tile> attackTiles = new ArrayList<>();
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
