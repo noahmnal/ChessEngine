@@ -1,10 +1,10 @@
-package GameLogic;
+package gameLogic;
 
-import Models.Board;
-import Pieces.Pawn;
-import Pieces.Piece;
-import Pieces.Queen;
-import Pieces.Rook;
+import models.Board;
+import pieces.Pawn;
+import pieces.Piece;
+import pieces.Queen;
+import pieces.Rook;
 
 public class Move {
   private final int fromX;
@@ -19,7 +19,7 @@ public class Move {
   private Rook castlingRook;
   private boolean firstMove = false;
   private Pawn promotion = null;
-  private Pawn enPasantNextTurn = null;
+  private Pawn enPassantNextTurn = null;
   private Queen promotedQueen;
   private int fiftyMoveCounter;
 
@@ -50,7 +50,7 @@ public class Move {
     this.castlingRook = castlingRook;
     this.castle = castlingRook != null;
     this.promotion = promotion;
-    this.enPasantNextTurn = enPasantNextTurn;
+    this.enPassantNextTurn = enPasantNextTurn;
     this.capturedPiece = capturedPiece;
     if (piece.getHaveNotMoved())
       firstMove = true;
@@ -73,8 +73,8 @@ public class Move {
     return promotedQueen;
   }
 
-  public Pawn getEnPasantNextTurn() {
-    return enPasantNextTurn;
+  public Pawn getEnPassantNextTurn() {
+    return enPassantNextTurn;
   }
 
   public Piece getPiece() {
@@ -83,11 +83,6 @@ public class Move {
 
   public boolean isEnPassant() {
     return enPassant;
-  }
-
-
-  public void setEnPasantNextTurn(Pawn enPasantNextTurn) {
-    this.enPasantNextTurn = enPasantNextTurn;
   }
 
   public boolean isCastle() {

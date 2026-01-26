@@ -1,31 +1,27 @@
-package Models;
+package models;
 
-import Cpu.OpeningBook;
-import Pieces.*;
+import cpu.OpeningBook;
+import gameLogic.*;
+import pieces.*;
 
 import java.util.ArrayList;
-import GameLogic.GamePanel;
-import GameLogic.Move;
-import GameLogic.MovesHistory;
 
-import static GameLogic.GamePanel.sanMoveHistory;
+import static gameLogic.GamePanel.sanMoveHistory;
 
 public class Board {
   private static final ArrayList<Tile> tiles = new ArrayList<>();
   public static boolean whiteInCheck = false;
   public static boolean blackInCheck = false;
   private static final ArrayList<Piece> pieces = new ArrayList<>();
-  private static final ArrayList<Move> whitePieces = new ArrayList<>();
-  private static final ArrayList<Move> blackPieces = new ArrayList<>();
   public static int fiftyMoveCounter = 0;
 
   public static void init() {
     for (int i = 1; i < 9; i++) {
       for (int j = 1; j < 9; j++) {
         if ((i + j) % 2 == 1)
-          tiles.add(new Tile(i, j, "black", null));
+          tiles.add(new Tile(i, j, "black"));
         else
-          tiles.add(new Tile(i, j, "white", null));
+          tiles.add(new Tile(i, j, "white"));
       }
     }
     for (Tile tile : tiles) {
@@ -108,11 +104,12 @@ public class Board {
     } else {
         fiftyMoveCounter = saveFiftyMoveCounter;
     }
-
+    PositionHistory.addCurrentPosition();
     GamePanel.turn = GameLogic.switchTurn(GamePanel.turn);
   }
 
   public static void reverseMove(Move move, boolean simulation) {
+    PositionHistory.removeLastPosition();
     int saveFiftyMoveCounter = fiftyMoveCounter;
     fiftyMoveCounter--;
     if (move.isCastle()) {
@@ -152,12 +149,21 @@ public class Board {
     return pieces;
   }
 
-  public static ArrayList<Move> getWhitePieces() {
-    return whitePieces;
+  public static String isMate() {
+    if (PositionHistory.isThreefoldRepetition())
+      return "draw";
+    for (Piece piece : getColouredPieces(GamePanel.turn)) {
+      if (!piece.setAndGetLegalTiles().isEmpty()) {
+        return "no";
+      }
+    }
+    if (whiteInCheck || blackInCheck) {
+      return "win";
+    }
+    return "draw";
   }
-  public static ArrayList<Move> getBlackPieces() {
-    return blackPieces;
-  }
+
+
 
   public static ArrayList<Piece> getColouredPieces(String colour) {
     ArrayList<Piece> coloredPieces = new ArrayList<>();

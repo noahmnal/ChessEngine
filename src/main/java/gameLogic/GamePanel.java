@@ -1,11 +1,10 @@
-package GameLogic;
+package gameLogic;
 
-import Cpu.*;
-import Models.Board;
-import Models.GameLogic;
-import Pieces.Piece;
-import Models.Tile;
-import Pieces.King;
+import cpu.Cpu;
+import models.Board;
+import pieces.Piece;
+import models.Tile;
+import pieces.King;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,13 +12,15 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 
-public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
+public class GamePanel extends JPanel implements ActionListener,
+        KeyListener, MouseListener, MouseMotionListener {
   public boolean playCpu = false;
   public static final int screenLength = 760;
   public static final int screenHeight = 760;
   private static final int screenLengthAddOn = 50;
   private static final int screenHeightAddOn = 50;
   public static final ArrayList<String> sanMoveHistory = new ArrayList<>();
+  private boolean gameOver;
 
   private final GameLogic gameLogic;
   private Cpu cpu = null;
@@ -27,7 +28,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 
   public static final int tileSize = screenLength / 8;
 
-  private int mouseX, mouseY;
+  private int mouseX;
+  private int mouseY;
   private Piece currentPieceMoving;
   public static String turn = "white";
   private int currentPositionRating = 0;
@@ -36,7 +38,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
   public static boolean flipScreen = true;
 
 
-  public GamePanel(GameLogic gameLogic) throws InterruptedException {
+  public GamePanel(GameLogic gameLogic) {
     Board.init();
     this.gameLogic = gameLogic;
     this.setPreferredSize(new Dimension(screenLength+screenLengthAddOn, screenHeight+screenHeightAddOn));
@@ -63,33 +65,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     draw(g);
   }
   public void draw(Graphics g) {
-    for (Tile tile : Board.getTiles()) {
-      if (tile.getColour().equals("black")) {
-        g.setColor(Color.RED);
-        g.fillRect((tile.getX() - 1) * tileSize, screenHeight-(tile.getY() * tileSize), tileSize, tileSize);
-      } else {
-        g.setColor(Color.WHITE);
-        g.fillRect((tile.getX() - 1) * tileSize, screenHeight-(tile.getY() * tileSize), tileSize, tileSize);
-      }
-    }
-    if (holdingPiece) {
-      for (Tile tile : currentPieceMoving.setAndGetLegalTiles()){
-        g.setColor(Color.GREEN);
-        if (flipScreen)
-          g.fillRect((tile.getX()-1) * tileSize, (8-tile.getY()) * tileSize, tileSize, tileSize);
-        else
-          g.fillRect((tile.getX()-1) * tileSize, (tile.getY()-1) * tileSize, tileSize, tileSize);
-
-      }
-    }
+    drawBoardSquares(g);
+    drawHoldingPiece(g);
     for (Piece piece : Board.getPieces()) {
         if (piece instanceof King king)
-          if (king.getInCheck()) {
-            g.setColor(Color.BLUE);
-            if (flipScreen)
-              g.fillRect((king.getX()-1)*tileSize, (8-king.getY())*tileSize, tileSize, tileSize);
-            else g.fillRect((king.getX()-1)*tileSize, (king.getY()-1)*tileSize, tileSize, tileSize);
-          }
+          drawKingInCheck(g, king);
         if (piece.getColour().equals("white")) {
           if (flipScreen)
             g.drawImage(piece.getWhiteImage(), (piece.getX() - 1) * tileSize,
@@ -106,8 +86,46 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
       }
 
     g.setColor(Color.BLUE);
-    g.setFont(new Font("Arial", Font.BOLD, 30));
+    g.setFont(new Font("Arial", Font.BOLD, 40));
     g.drawString(String.valueOf(currentPositionRating), screenLength-(screenHeightAddOn/2), screenHeight-(screenHeightAddOn)/2);
+    if (gameOver) {
+      String winner = GameLogic.switchTurn(turn);
+      g.drawString("Game over " + winner + " " + Board.isMate(), screenLength / 2 - 100, screenHeight / 2);
+    }
+    }
+
+    private void drawHoldingPiece(Graphics g) {
+      if (holdingPiece) {
+        for (Tile tile : currentPieceMoving.setAndGetLegalTiles()){
+          g.setColor(Color.GREEN);
+          if (flipScreen)
+            g.fillRect((tile.getX()-1) * tileSize, (8-tile.getY()) * tileSize, tileSize, tileSize);
+          else
+            g.fillRect((tile.getX()-1) * tileSize, (tile.getY()-1) * tileSize, tileSize, tileSize);
+
+        }
+      }
+    }
+
+    private void drawBoardSquares(Graphics g) {
+      for (Tile tile : Board.getTiles()) {
+        if (tile.getColour().equals("black")) {
+          g.setColor(Color.RED);
+          g.fillRect((tile.getX() - 1) * tileSize, screenHeight-(tile.getY() * tileSize), tileSize, tileSize);
+        } else {
+          g.setColor(Color.WHITE);
+          g.fillRect((tile.getX() - 1) * tileSize, screenHeight-(tile.getY() * tileSize), tileSize, tileSize);
+        }
+      }
+    }
+
+    private void drawKingInCheck(Graphics g, King king) {
+      if (king.getInCheck()) {
+        g.setColor(Color.BLUE);
+        if (flipScreen)
+          g.fillRect((king.getX()-1)*tileSize, (8-king.getY())*tileSize, tileSize, tileSize);
+        else g.fillRect((king.getX()-1)*tileSize, (king.getY()-1)*tileSize, tileSize, tileSize);
+      }
     }
 
   @Override
@@ -171,15 +189,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     int tileY = gameLogic.getMouseLocationTile(mouseX, mouseY).getY();
     try {
       if (turn.equals(currentPieceMoving.getColour())) {
-        Tile chosenTile = new Tile(tileX, tileY);
-        if(currentPieceMoving.setAndGetLegalTiles().contains(chosenTile)) {
+        if(currentPieceMoving.setAndGetLegalTiles().contains(new Tile(tileX, tileY))) {
           Move move = GameLogic.createMove(tileX, tileY, currentPieceMoving);
           Board.makeMove(move, false);
+          gameOver = isGameOver();
           repaint();
           currentPositionRating = PositionRater.ratePosition(Board.getPieces());
           //flipScreen();
           if(playCpu && turn.equals(cpuColour)) {
             cpu.playMove();
+            gameOver = isGameOver();
           }
         }
       }
@@ -187,6 +206,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     }
 
   repaint();
+  }
+
+  private boolean isGameOver() {
+    return (Board.isMate().equals("win") || Board.isMate().equals("draw"));
   }
 
   @Override

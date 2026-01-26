@@ -1,21 +1,21 @@
-package Cpu;
+package cpu;
 
-import Models.Board;
-import Models.GameLogic;
-import Pieces.Pawn;
-import Pieces.Piece;
-import Models.Tile;
-import GameLogic.*;
+import models.Board;
+import gameLogic.GameLogic;
+import pieces.Piece;
+import models.Tile;
+import gameLogic.*;
 
 import java.util.*;
 
-import static GameLogic.GamePanel.cpuColour;
-import static GameLogic.GamePanel.sanMoveHistory;
+import static gameLogic.GamePanel.cpuColour;
+import static gameLogic.GamePanel.sanMoveHistory;
 
 
 public class Cpu {
   private int nodes;
   private boolean opening = true;
+  private final int searchDepth = 3;
 
   public Cpu() {
   }
@@ -23,26 +23,15 @@ public class Cpu {
   public void playMove() {
     int debugger = Board.getPieces().size();
     if (opening) {
-      System.out.println("test");
-      String nextMove = OpeningBook.findMoveInBook(sanMoveHistory.toArray(new String[0]), OpeningBook.gmGames);
-      System.out.println("is here");
-      if (nextMove.isEmpty()) {
+      String nextMove;
         if (cpuColour.equals("white")) {
           nextMove = OpeningBook.findMoveInBook(sanMoveHistory.toArray(new String[0]), OpeningBook.noobOpeningsWhite);
-          System.out.println("from nobbboom" + nextMove);
         } else{
           nextMove = OpeningBook.findMoveInBook(sanMoveHistory.toArray(new String[0]), OpeningBook.noobOpeningsBlack);
-          System.out.println("from nobbboom" + nextMove);
         }
-      }
       if (nextMove.isEmpty()) {
         opening = false;
       } else {
-        if (debugger == Board.getPieces().size()) {
-          for (int i = 0; i < 1000; i++) {
-            System.out.println("test");
-          }
-        }
         Board.makeMove(OpeningBook.notationToMove(nextMove, GamePanel.turn), false);
         return;
       }
@@ -63,7 +52,7 @@ public class Cpu {
       for (Tile tile : piece.setAndGetLegalTiles()) {
         Move move = GameLogic.createMove(tile.getX(), tile.getY(), piece);
         Board.makeMove(move, true);
-        int score = minimax(3, GamePanel.turn.equals("white"), -100000, 100000, move);
+        int score = minimax(searchDepth, GamePanel.turn.equals("white"), -100000, 100000, move);
         Board.reverseMove(move, true);
         if (GamePanel.turn.equals("white")) {
           if (score > bestScore) {
@@ -129,7 +118,16 @@ public class Cpu {
       }
       return boardScore;
     }
+
     if (isWhiteTurn) {
+      /**
+      if (depth == searchDepth) {
+        if (Board.isMate().equals("win"))
+          return  10000;
+        if (Board.isMate().equals("draw"))
+          return  0;
+      }
+       **/
       int higestScore = Integer.MIN_VALUE;
     for (Piece piece : Board.getColouredPieces("white")) {
       for (Tile tile : piece.getSudoLegalTiles()) {
@@ -147,6 +145,14 @@ public class Cpu {
     }
     return higestScore;
     } else {
+      /**
+      if (depth == searchDepth) {
+        if (Board.isMate().equals("win"))
+          return  -10000;
+        if (Board.isMate().equals("draw"))
+          return  0;
+      }
+       **/
       int lowestScore = Integer.MAX_VALUE;
       for (Piece piece : Board.getColouredPieces("black")) {
         for (Tile tile : piece.getSudoLegalTiles()) {

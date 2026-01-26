@@ -1,9 +1,8 @@
-package Pieces;
+package pieces;
 
-import Models.Tile;
+import models.Tile;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -13,10 +12,10 @@ public class Queen extends Piece {
     super(x, y, color);
     value = 900;
     this.whiteImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/whiteQueen.png"))
+            Objects.requireNonNull(getClass().getResource("/whiteQueen.png"))
     ).getImage();
     this.blackImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/BlackQueen.png"))
+            Objects.requireNonNull(getClass().getResource("/BlackQueen.png"))
     ).getImage();
 
   }

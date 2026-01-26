@@ -1,10 +1,11 @@
-package Tests;
 
-import GameLogic.Move;
-import Pieces.*;
+import gameLogic.GameLogic;
+import gameLogic.Move;
+import gameLogic.MovesHistory;
+import pieces.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import Models.*;
+import models.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -137,5 +138,70 @@ public class testGameLogic {
 
     assertTrue(Board.whiteInCheck);
     assertFalse(Board.blackInCheck);
+  }
+
+  @Test
+  void testEnPassantCreationAndCapture() {
+    // 1. Tøm brettet og historikken for en kontrollert test
+    Board.getPieces().clear();
+    MovesHistory.getMoves().clear();
+
+    // 2. Sett opp situasjonen: Hvit bonde på rad 5, svart bonde hopper to felt frem til rad 5
+    Pawn whitePawn = new Pawn(4, 5, "white");
+    Pawn blackPawn = new Pawn(5, 7, "black");
+
+    // 3. Svart gjør et "Double Step". Dette må lagres i historikken for at handlePawnMove skal virke
+    Move blackDoubleStep = new Move(5, 7, 5, 5, blackPawn, null, false, 0, null, null, blackPawn);
+    Board.makeMove(blackDoubleStep, false);
+    // (Antar Board.makeMove legger trekket i MovesHistory)
+
+    // 4. Fortell den hvite bonden at 5,6 er et gyldig En Passant-felt
+    whitePawn.setEnPassantMove(new Tile(5, 6));
+
+    // 5. Test createMove for En Passant
+    Move epMove = GameLogic.createMove(5, 6, whitePawn);
+
+    // Verifisering
+    assertNotNull(epMove, "En Passant-trekket ble ikke opprettet");
+    assertTrue(epMove.isEnPassant(), "Trekket er ikke markert som En Passant");
+    assertEquals(blackPawn, epMove.getCapturedPiece(), "Feil brikke ble markert for fangst");
+  }
+
+  @Test
+  void testEnPassantExecution() {
+    // Tester at Board faktisk fjerner brikken når trekket utføres
+    Board.getPieces().clear();
+    MovesHistory.getMoves().clear();
+
+    Pawn whitePawn = new Pawn(4, 2, "white");
+    Pawn blackPawn = new Pawn(5, 4, "black"); // Står ved siden av
+    whitePawn.getSudoLegalTiles();
+    Move passantSetup = GameLogic.createMove(4, 4, whitePawn);
+    Board.makeMove(passantSetup, false);
+    // Manuelt opprett et gyldig En Passant-trekk slik handlePawnMove ville gjort
+    blackPawn.getSudoLegalTiles();
+    Move epMove = GameLogic.createMove(4, 3, blackPawn);
+    Board.makeMove(epMove, false);
+
+
+    // Verifiser at den svarte bonden er borte fra brettet
+    assertFalse(Board.getPieces().contains(whitePawn), "Den fangede bonden står fortsatt på brettet");
+    assertEquals(4, whitePawn.getX());
+    assertEquals(4, whitePawn.getY());
+    assertEquals(4, blackPawn.getX());
+    assertEquals(3, blackPawn.getY());
+  }
+
+  @Test
+  void testPawnPromotionCreation() {
+    // Tester y == 8 logikken i handlePawnMove
+    Pawn whitePawn = new Pawn(1, 7, "white");
+    Board.getPieces().add(whitePawn);
+
+    // Flytt til siste rad
+    Move promotionMove = GameLogic.createMove(1, 8, whitePawn);
+
+    assertNotNull(promotionMove.getPiece(), "Bonden ble ikke markert for promotion");
+    assertEquals(whitePawn, promotionMove.getPiece());
   }
 }

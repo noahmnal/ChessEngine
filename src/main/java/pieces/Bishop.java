@@ -1,7 +1,6 @@
-package Pieces;
+package pieces;
 
-import Models.Board;
-import Models.Tile;
+import models.Tile;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -12,10 +11,10 @@ public class Bishop extends Piece {
     super(x,y,color);
     value = 300;
     this.whiteImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/whiteBishop.png"))
+            Objects.requireNonNull(getClass().getResource("/whiteBishop.png"))
     ).getImage();
     this.blackImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/blackBishop.png"))
+            Objects.requireNonNull(getClass().getResource("/blackBishop.png"))
     ).getImage();
 
   }

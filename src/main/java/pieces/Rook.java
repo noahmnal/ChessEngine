@@ -1,6 +1,6 @@
-package Pieces;
+package pieces;
 
-import Models.Tile;
+import models.Tile;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -11,10 +11,10 @@ public class Rook extends Piece {
     super(x, y, color);
     value = 500;
     this.whiteImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/whiteRook.png"))
+            Objects.requireNonNull(getClass().getResource("/whiteRook.png"))
     ).getImage();
     this.blackImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/blackRook.png"))
+            Objects.requireNonNull(getClass().getResource("/blackRook.png"))
     ).getImage();
   }
 

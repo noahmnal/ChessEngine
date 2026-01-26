@@ -1,33 +1,39 @@
-package Cpu;
+package cpu;
 
-import GameLogic.Move;
-import Models.Board;
-import Models.Tile;
-import Pieces.*;
+import gameLogic.Move;
+import models.Board;
+import models.Tile;
+import pieces.*;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class OpeningBook {
-  public static List<String> gmGames;
   public static List<String> noobOpeningsWhite;
   public static List<String> noobOpeningsBlack;
 
 
 
 
-  public OpeningBook() throws IOException {
-     gmGames = Files.readAllLines(
-            Path.of("src/Cpu/GmGames.txt"));
+  public static void init() throws Exception {
+      try {
+        noobOpeningsWhite = loadResource("/6movesOpeningsWhite+0.5.txt");
+        noobOpeningsBlack = loadResource("/5movesOpeningsBlack-0.2.txt");
+      } catch (Exception e) {
+        System.err.println("Kunne ikke laste åpningsbøker: " + e.getMessage());
+        throw e;
+      }
+    }
 
-     noobOpeningsWhite = Files.readAllLines(Path.of("src/Cpu/6movesOpeningsWhite+0.5.txt"));
-
-    noobOpeningsBlack = Files.readAllLines(Path.of("src/Cpu/5movesOpeningsBlack-0.2.txt"));
-
-
-  }
+// En hjelpemetode for å holde koden ryddig
+private static List<String> loadResource(String fileName) throws Exception {
+  URI uri = Objects.requireNonNull(OpeningBook.class.getResource(fileName), "Fant ikke filen: " + fileName).toURI();
+  return Files.readAllLines(Paths.get(uri));
+}
 
   public static String findMoveInBook(String[] gameNotation, List<String> openingBook) {
     System.out.println(Arrays.toString(gameNotation));
@@ -98,7 +104,7 @@ public class OpeningBook {
         return "O-O" + addCheckSymbol(move);
       else return "O-O-O" + addCheckSymbol(move);
     }
-    if (move.getPiece() instanceof Pawn pawn && move.getCapturedPiece() != null)
+    if (move.getPiece() instanceof Pawn && move.getCapturedPiece() != null)
       return  xCordToLetter(move.getFromX()) + captureNotation(move) + xCordToLetter(move.getCapturedPiece().getX()) + move.getToY();
     return pieceToNotationChar(move.getPiece()) + checkForClarification(move)
             + captureNotation(move) + xCordToLetter(move.getToX()) + move.getToY() + addCheckSymbol(move);

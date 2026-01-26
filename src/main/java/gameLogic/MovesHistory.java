@@ -1,4 +1,4 @@
-package GameLogic;
+package gameLogic;
 
 
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ public class MovesHistory {
   public static ArrayList<Move> getMoves() {
     return moves;
   }
+
   public static void removeLast() {
     if (moves.isEmpty()) {return;}
     moves.removeLast();

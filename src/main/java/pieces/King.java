@@ -1,9 +1,8 @@
-package Pieces;
-import Models.Board;
-import Models.Tile;
+package pieces;
+import models.Board;
+import models.Tile;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -18,10 +17,10 @@ public class King extends Piece {
     value = 1000000;
      castlingTile = new HashMap<>();
     this.whiteImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/whiteKing.png"))
+            Objects.requireNonNull(getClass().getResource("/whiteKing.png"))
     ).getImage();
     this.blackImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/blackKing.png"))
+            Objects.requireNonNull(getClass().getResource("/blackKing.png"))
     ).getImage();
   }
   @Override

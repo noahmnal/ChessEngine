@@ -1,10 +1,8 @@
-package Models;
+package models;
 
 import java.awt.*;
 import java.util.Objects;
-
-import GameLogic.GamePanel;
-import Pieces.Piece;
+import gameLogic.GamePanel;
 
 public class Tile {
   private final int y;
@@ -17,7 +15,7 @@ public class Tile {
 
   private Rectangle hitbox;
 
-  public Tile(int x, int y, String color, Piece piece) {
+  public Tile(int x, int y, String color) {
     this.x = x;
     this.y = y;
     this.color = color;
@@ -33,7 +31,6 @@ public class Tile {
     if (!flipScreen)
       hitbox = new Rectangle((x-1)*GamePanel.tileSize, (y-1)*GamePanel.tileSize, GamePanel.tileSize,  GamePanel.tileSize);
     else hitbox = new Rectangle((x-1)*GamePanel.tileSize, GamePanel.screenHeight-y*GamePanel.tileSize, GamePanel.tileSize,  GamePanel.tileSize);
-
   }
 
   public int getX() {
@@ -47,8 +44,6 @@ public class Tile {
   public String getColour() {
     return color;
   }
-
-
 
   @Override
   public boolean equals(Object o) {

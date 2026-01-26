@@ -1,14 +1,12 @@
-package Tests;
 import static org.junit.jupiter.api.Assertions.*;
-
-import Cpu.OpeningBook;
+import cpu.OpeningBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import Models.Board;
-import GameLogic.Move;
-import Pieces.Knight;
-import Pieces.Piece;
+import models.Board;
+import gameLogic.Move;
+import pieces.Knight;
+import pieces.Piece;
 
 public class OpeningBookTest {
 

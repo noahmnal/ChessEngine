@@ -1,10 +1,10 @@
-package Tests;
-import GameLogic.*;
-import Models.Board;
-import Pieces.*;
+
+import gameLogic.*;
+import models.Board;
+import pieces.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import Models.*;
+import models.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,7 +114,7 @@ class TestBoard {
 
 
     assertFalse(Board.getPieces().contains(blackPawn),
-            "Captured pawn should be removed from pieces list");
+            "Captured pawn should be removed from Main.Java.pieces list");
   }
 
   @Test
@@ -141,7 +141,7 @@ class TestBoard {
             "En passant captured pawn must be removed from original square");
 
     assertFalse(Board.getPieces().contains(blackPawn),
-            "Captured pawn must be removed from pieces list");
+            "Captured pawn must be removed from Main.Java.pieces list");
   }
 
   @Test
@@ -189,7 +189,7 @@ class TestBoard {
         if (a != b) {
           assertFalse(
                   a.getX() == b.getX() && a.getY() == b.getY(),
-                  "Two pieces occupy same square: " +
+                  "Two Main.Java.pieces occupy same square: " +
                           a.getClass() + " & " + b.getClass() +
                           " at " + a.getX() + "," + a.getY()
           );

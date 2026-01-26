@@ -1,9 +1,8 @@
-package Pieces;
+package pieces;
 
-import GameLogic.MovesHistory;
-import Models.Tile;
+import gameLogic.MovesHistory;
+import models.Tile;
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -13,10 +12,10 @@ public class Pawn extends Piece {
     super(x, y, color);
     value = 100;
     this.whiteImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/whitePawn.png"))).getImage();
+            Objects.requireNonNull(getClass().getResource("/whitePawn.png"))).getImage();
 
     this.blackImage = new ImageIcon(
-            Objects.requireNonNull(getClass().getResource("/Images/blackPawn.png"))).getImage();
+            Objects.requireNonNull(getClass().getResource("/blackPawn.png"))).getImage();
 
   }
 
@@ -92,7 +91,7 @@ public class Pawn extends Piece {
 
   private void addEnPassant(ArrayList<Tile> legalTiles) {
     if (MovesHistory.getMoves().isEmpty()) return;
-    Pawn pawnToBeCaptured= MovesHistory.getMoves().getLast().getEnPasantNextTurn();
+    Pawn pawnToBeCaptured= MovesHistory.getMoves().getLast().getEnPassantNextTurn();
     if (pawnToBeCaptured == null) return;
     if (pawnToBeCaptured.getColour().equals(colour)) return;
     if (pawnToBeCaptured.getY() == y && Math.abs(pawnToBeCaptured.getX()-x) == 1) {

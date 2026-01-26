@@ -1,8 +1,7 @@
-package Pieces;
+package pieces;
 
-import GameLogic.Move;
-import Models.Board;
-import Models.Tile;
+import models.Board;
+import models.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
